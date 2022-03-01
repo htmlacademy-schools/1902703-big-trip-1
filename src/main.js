@@ -23,5 +23,6 @@ const eventListElement = tripEventstElement.querySelector('.trip-events__list');
 renderTemplate(eventListElement, createFormCreateTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(eventListElement, createFormEditTemplate(), RenderPosition.BEFOREEND);
 
-for (let i = 0; i < 3; i++)
-    renderTemplate(eventListElement, createDestinationPointTemplate(), RenderPosition.BEFOREEND);
+for (let i = 0; i < 3; i++) {
+  renderTemplate(eventListElement, createDestinationPointTemplate(), RenderPosition.BEFOREEND);
+}
