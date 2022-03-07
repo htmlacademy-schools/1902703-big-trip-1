@@ -1,25 +1,25 @@
-import { getDate_MD, getDate_YMD, getDate_Hm, getDate_YMDHm, getTimeIntervalMinutes } from '../utils.js';
+import { getDateMD, getDateYMD, getDateHm, getDateYMDHm, getTimeIntervalMinutes } from '../utils.js';
 
 const createOffersTemplate = (offers) => {
-  let offersToRender = offers.filter(offer => offer.active);
-  if (offersToRender.length == 0) return '';
+  let offersToRender = offers.filter((offer) => offer.active);
+  if (offersToRender.length === 0) { return ''; }
 
   const getListItemTemplate = (offer) => {
-    let { title, price, active } = offer;
+    const { title, price } = offer;
     return `<li class="event__offer">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
-    </li>`
-  }
+    </li>`;
+  };
 
-  offersToRender = offersToRender.map(offer => getListItemTemplate(offer)).join('\n');
+  offersToRender = offersToRender.map((offer) => getListItemTemplate(offer)).join('\n');
 
   return `<h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
     ${offersToRender}
-    </ul>`
-}
+    </ul>`;
+};
 
 export const createDestinationPointTemplate = (point) => {
   const { type, city, price, offers, time, isFavorite } = point;
@@ -28,16 +28,16 @@ export const createDestinationPointTemplate = (point) => {
 
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${getDate_YMD(beginDate)}">${getDate_MD(beginDate)}</time>
+      <time class="event__date" datetime="${getDateYMD(beginDate)}">${getDateMD(beginDate)}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${city}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${getDate_YMDHm(beginDate)}">${getDate_Hm(beginDate)}</time>
+          <time class="event__start-time" datetime="${getDateYMDHm(beginDate)}">${getDateHm(beginDate)}</time>
           &mdash;
-          <time class="event__end-time" datetime="${getDate_YMDHm(endDate)}">${getDate_Hm(endDate)}</time>
+          <time class="event__end-time" datetime="${getDateYMDHm(endDate)}">${getDateHm(endDate)}</time>
         </p>
         <p class="event__duration">${getTimeIntervalMinutes(beginDate, endDate)}</p>
       </div>

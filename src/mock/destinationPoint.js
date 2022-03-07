@@ -72,7 +72,7 @@ const generateDescription = () => {
   for (let i = 0; i < sentCount; i++) {
     const sent = getRandomElement(sentences);
     sentences.splice(sentences.indexOf(sent), 1);
-    result += sent + (i !== sentCount - 1) ? ' ' : '';
+    result += sent + ((i !== sentCount - 1) ? ' ' : '');
   }
 
   return result;
@@ -80,13 +80,13 @@ const generateDescription = () => {
 
 const generatePhotoLinks = () => {
   const phCount = getRandomInteger(1, 5);
-  let result = [];
+  const result = [];
   for (let i = 0; i < phCount; i++) {
     result.push(`http://picsum.photos/248/152?r=${Math.random()}`);
   }
 
   return result;
-}
+};
 
 export const generateDestPoint = (lastPoint) => ({
   type: generatePointType(),

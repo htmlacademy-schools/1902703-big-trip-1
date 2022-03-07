@@ -26,8 +26,8 @@ renderTemplate(tripEventsElement, createEventListTemplate(), RenderPosition.BEFO
 const eventListElement = tripEventsElement.querySelector('.trip-events__list');
 
 renderTemplate(eventListElement, createFormCreateTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(eventListElement, createFormEditTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(eventListElement, createFormEditTemplate(points[0]), RenderPosition.BEFOREEND);
 
-for (let point of points) {
-  renderTemplate(eventListElement, createDestinationPointTemplate(point), RenderPosition.BEFOREEND);
+for (let i = 1; i < POINT_COUNT; i++) {
+  renderTemplate(eventListElement, createDestinationPointTemplate(points[i]), RenderPosition.BEFOREEND);
 }
