@@ -44,7 +44,7 @@ const generateOffers = () => {
       {
         title: nextTitle,
         price: getRandomInteger(2, 30) * 10,
-        active: Boolean(getRandomInteger(0, 1))
+        isActive: Boolean(getRandomInteger(0, 1))
       });
     titles.splice(titles.indexOf(nextTitle), 1);
   }
@@ -79,7 +79,7 @@ const generateDescription = () => {
 };
 
 const generatePhotoLinks = () => {
-  const phCount = getRandomInteger(1, 5);
+  const phCount = getRandomInteger(1, 10);
   const result = [];
   for (let i = 0; i < phCount; i++) {
     result.push(`http://picsum.photos/248/152?r=${Math.random()}`);
@@ -88,13 +88,13 @@ const generatePhotoLinks = () => {
   return result;
 };
 
-export const generateDestPoint = (lastPoint) => ({
+export const generateDestPoint = () => ({
   type: generatePointType(),
   city: generateCity(),
   price: generatePrice(),
   offers: generateOffers(),
   description: generateDescription(),
   photos: generatePhotoLinks(),
-  time: generateTime(lastPoint?.time),
+  time: generateTime(),
   isFavorite: Boolean(getRandomInteger(0, 1))
 });

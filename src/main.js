@@ -7,10 +7,10 @@ import { createFormEditTemplate } from './view/form-edit-view.js';
 import { createDestinationPointTemplate } from './view/destination-point-view.js';
 import { createEventListTemplate } from './view/event-list-view.js';
 import { generateDestPoint } from './mock/destinationPoint.js';
-import { sortPoints } from './utils.js';
+import { sortPointsByDate } from './utils.js';
 
 const POINT_COUNT = 20;
-const points = sortPoints(Array.from({ length: POINT_COUNT }, generateDestPoint));
+const points = sortPointsByDate(Array.from({ length: POINT_COUNT }, generateDestPoint));
 
 const siteMenuElement = document.querySelector('.trip-controls__navigation');
 const filterElement = document.querySelector('.trip-controls__filters');
@@ -25,7 +25,7 @@ renderTemplate(tripEventsElement, createEventListTemplate(), RenderPosition.BEFO
 
 const eventListElement = tripEventsElement.querySelector('.trip-events__list');
 
-renderTemplate(eventListElement, createFormCreateTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(eventListElement, createFormCreateTemplate(points[0]), RenderPosition.BEFOREEND);
 renderTemplate(eventListElement, createFormEditTemplate(points[0]), RenderPosition.BEFOREEND);
 
 for (let i = 1; i < POINT_COUNT; i++) {

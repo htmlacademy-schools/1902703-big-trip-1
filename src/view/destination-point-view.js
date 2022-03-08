@@ -1,4 +1,4 @@
-import { getDateMD, getDateYMD, getDateHm, getDateYMDHm, getTimeIntervalMinutes } from '../utils.js';
+import { getDay, getDate, getTime, getDatetime, getMinutesInterval } from '../utils.js';
 
 const createOffersTemplate = (offers) => {
   let offersToRender = offers.filter((offer) => offer.active);
@@ -28,18 +28,18 @@ export const createDestinationPointTemplate = (point) => {
 
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${getDateYMD(beginDate)}">${getDateMD(beginDate)}</time>
+      <time class="event__date" datetime="${getDate(beginDate)}">${getDay(beginDate)}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${city}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${getDateYMDHm(beginDate)}">${getDateHm(beginDate)}</time>
+          <time class="event__start-time" datetime="${getDatetime(beginDate)}">${getTime(beginDate)}</time>
           &mdash;
-          <time class="event__end-time" datetime="${getDateYMDHm(endDate)}">${getDateHm(endDate)}</time>
+          <time class="event__end-time" datetime="${getDatetime(endDate)}">${getTime(endDate)}</time>
         </p>
-        <p class="event__duration">${getTimeIntervalMinutes(beginDate, endDate)}</p>
+        <p class="event__duration">${getMinutesInterval(beginDate, endDate)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>
