@@ -1,7 +1,7 @@
-import { getDay, getDate, getTime, getDatetime, getMinutesInterval } from '../utils.js';
+import { getMonthDay, getDate, getTime, getDatetime, getMinutesInterval } from '../utils.js';
 
 const createOffersTemplate = (offers) => {
-  let offersToRender = offers.filter((offer) => offer.active);
+  let offersToRender = offers.filter((offer) => offer.isActive);
   if (offersToRender.length === 0) { return ''; }
 
   const getListItemTemplate = (offer) => {
@@ -28,7 +28,7 @@ export const createDestinationPointTemplate = (point) => {
 
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${getDate(beginDate)}">${getDay(beginDate)}</time>
+      <time class="event__date" datetime="${getDate(beginDate)}">${getMonthDay(beginDate)}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>

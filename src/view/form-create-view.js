@@ -1,7 +1,7 @@
 import { getFormDate, createFormOffersTemplate, createFormDescription } from '../utils.js';
 
 export const createFormCreateTemplate = (point) => {
-  const { type, city, price, offers, time, description, photos } = point;
+  const { type, city, price, offers, time, description, photoLinks } = point;
   const beginDate = time.beginDate;
   const endDate = time.endDate;
 
@@ -102,7 +102,7 @@ export const createFormCreateTemplate = (point) => {
 
         ${createFormOffersTemplate(offers)}
 
-        ${createFormDescription(description, photos)}
+        ${createFormDescription(description, photoLinks)}
         
       </section>
     </form>

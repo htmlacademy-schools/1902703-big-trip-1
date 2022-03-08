@@ -31,7 +31,8 @@ export const generateTime = () => {
 const formatDate = (date, formatter) =>
   dayjs(date).format(formatter);
 
-export const getDay = (date) => formatDate(date, 'MMM D');
+export const getDay = (date) => formatDate(date, 'D');
+export const getMonthDay = (date) => formatDate(date, 'MMM D');
 export const getDate = (date) => formatDate(date, 'YYYY-MM-DD');
 export const getTime = (date) => formatDate(date, 'HH:mm');
 export const getDatetime = (date) => formatDate(date, 'YYYY-MM-DDTHH:mm');
@@ -87,14 +88,17 @@ export const createFormOffersTemplate = (offers) => {
   </section>`;
 };
 
-export const createFormDescription = (description, photos = undefined) => {
-  if (description.length === 0) { return; }
+export const createFormDescription = (description, photoLinks) => {
+  if (!description?.length && !photoLinks?.length) { return ''; }
 
-  const photosTemplate = photos
+  if (!description)
+  {description = '';}
+
+  const photosTemplate = photoLinks
     ?.map((ph) => `<img class="event__photo" src="${ph}" alt="Event photo">`)
     ?.join('\n');
 
-  const photosContainer = photosTemplate === undefined
+  const photosContainer = !photosTemplate
     ? ''
     : `<div class="event__photos-container">
       <div class="event__photos-tape">

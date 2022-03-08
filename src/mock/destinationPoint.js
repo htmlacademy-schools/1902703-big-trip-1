@@ -19,7 +19,16 @@ const generateCity = () => {
   const cities = [
     'Geneva',
     'Amsterdam',
-    'Chamonix'
+    'Chamonix',
+    'Moscow',
+    'Yekaterinburg',
+    'Saint Petersburg',
+    'Novosibirsk',
+    'Kazan',
+    'Nizhny Novgorod',
+    'Chelyabinsk',
+    'Samara',
+    'Omsk'
   ];
   return getRandomElement(cities);
 };
@@ -94,7 +103,7 @@ export const generateDestPoint = () => ({
   price: generatePrice(),
   offers: generateOffers(),
   description: generateDescription(),
-  photos: generatePhotoLinks(),
+  photoLinks: generatePhotoLinks(),
   time: generateTime(),
   isFavorite: Boolean(getRandomInteger(0, 1))
 });
