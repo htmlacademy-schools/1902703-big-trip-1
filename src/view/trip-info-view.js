@@ -1,20 +1,22 @@
 import { getMonthDay, getDay } from '../utils.js';
 
 const getTripInfo = (points) => {
-  const beginDate = points[0].time.beginDate;
-  const endDate = points[points.length - 1].time.endDate;
+  const date_from = points[0].date_from;
+  const date_to = points[points.length - 1].date_to;
+
   let price = 0;
   let route = [];
   let lastCity = '';
 
   for (const point of points) {
-    price += point.price;
+    price += point.base_price;
     point.offers
-      .forEach((offer) => {
-        if (offer.isActive) { price += offer.price; }
-      });
+      .forEach((offerStruct) => offerStruct.offers
+        .forEach((offer) => {
+          if (offer.isActive) { price += offer.price; }
+        }));
 
-    const newCity = point.city;
+    const newCity = point.destination.name;
     if (newCity !== lastCity) {
       route.push(newCity);
       lastCity = newCity;
@@ -25,20 +27,20 @@ const getTripInfo = (points) => {
 
   return {
     price,
-    beginDate,
-    endDate,
+    date_from,
+    date_to,
     route
   };
 };
 
 export const createTripInfoTemplate = (points) => {
-  const { price, beginDate, endDate, route } = getTripInfo(points);
+  const { price, date_from, date_to, route } = getTripInfo(points);
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${route}</h1>
 
-      <p class="trip-info__dates">${getMonthDay(beginDate)}&nbsp;&mdash;&nbsp;${getDay(endDate)}</p>
+      <p class="trip-info__dates">${getMonthDay(date_from)}&nbsp;&mdash;&nbsp;${getDay(date_to)}</p>
     </div>
 
     <p class="trip-info__cost">

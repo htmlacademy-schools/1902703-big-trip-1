@@ -1,9 +1,8 @@
 import { getFormDate, createFormOffersTemplate, createFormDescription } from '../utils.js';
 
 export const createFormCreateTemplate = (point) => {
-  const { type, city, price, offers, time, description, photoLinks } = point;
-  const beginDate = time.beginDate;
-  const endDate = time.endDate;
+  const { base_price, date_from, date_to, destination, offers, type } = point;
+  const city = destination.name;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -11,7 +10,7 @@ export const createFormCreateTemplate = (point) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -81,10 +80,10 @@ export const createFormCreateTemplate = (point) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormDate(beginDate)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormDate(date_from)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormDate(endDate)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormDate(date_to)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -92,7 +91,7 @@ export const createFormCreateTemplate = (point) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${base_price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -102,7 +101,7 @@ export const createFormCreateTemplate = (point) => {
 
         ${createFormOffersTemplate(offers)}
 
-        ${createFormDescription(description, photoLinks)}
+        ${createFormDescription(destination.description, destination.pictures)}
         
       </section>
     </form>

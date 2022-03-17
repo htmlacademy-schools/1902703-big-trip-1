@@ -7,11 +7,11 @@ import { createFormEditTemplate } from './view/form-edit-view.js';
 import { createDestinationPointTemplate } from './view/destination-point-view.js';
 import { createEventListTemplate } from './view/event-list-view.js';
 import { createTripInfoTemplate } from './view/trip-info-view.js';
-import { generateDestPoint } from './mock/destinationPoint.js';
+import { generatePoint } from './mock/destinationPoint.js';
 import { sortPointsByDate } from './utils.js';
 
 const POINT_COUNT = 20;
-const points = sortPointsByDate(Array.from({ length: POINT_COUNT }, generateDestPoint));
+const points = sortPointsByDate(Array.from({ length: POINT_COUNT }, generatePoint));
 
 const tripMainElement = document.querySelector('.trip-main');
 const siteMenuElement = tripMainElement.querySelector('.trip-controls__navigation');

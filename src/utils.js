@@ -56,29 +56,31 @@ export const getMinutesInterval = (beginDate, endDate) =>
   formatMinutesInterval(dayjs(endDate).diff(beginDate, 'm'));
 
 export const sortPointsByDate = (points) =>
-  points.sort((p1, p2) => p1.time.beginDate - p2.time.beginDate);
+  points.sort((p1, p2) => p1.date_from - p2.date_from);
 
-const getID = (name) =>
-  name.toLowerCase().replaceAll(' ', '-');
+export const createFormOffersTemplate = (offerArray) => {
+  const getOffersTemplate = (type, offers) => {
+    if (offers.length === 0) { return ''; }
 
-export const createFormOffersTemplate = (offers) => {
-  if (offers.length === 0) { return ''; }
+    const getListItemTemplate = (offer) => {
+      const { id, title, price, isActive } = offer;
 
-  const getListItemTemplate = (offer) => {
-    const { title, price, isActive } = offer;
-    const id = getID(title);
+      return `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isActive ? 'checked' : ''}>
+        <label class="event__offer-label" for="event-offer-${type}-${id}">
+          <span class="event__offer-title">${title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${price}</span>
+        </label>
+      </div>`;
+    };
 
-    return `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}" ${isActive ? 'checked' : ''}>
-      <label class="event__offer-label" for="event-offer-${id}-1">
-        <span class="event__offer-title">${title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
-      </label>
-    </div>`;
+    return offers.map((offer) => getListItemTemplate(offer)).join('\n');
   };
 
-  const offersToRender = offers.map((offer) => getListItemTemplate(offer)).join('\n');
+  const offersToRender = offerArray
+    .map((offerStruct) => getOffersTemplate(offerStruct.type, offerStruct.offers))
+    .join('\n');
 
   return `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -88,27 +90,26 @@ export const createFormOffersTemplate = (offers) => {
   </section>`;
 };
 
-export const createFormDescription = (description, photoLinks) => {
-  if (!description?.length && !photoLinks?.length) { return ''; }
+export const createFormDescription = (description, pictures) => {
+  if (!description?.length && !pictures?.length) { return ''; }
 
-  if (!description)
-  {description = '';}
+  if (!description) { description = ''; }
 
-  const photosTemplate = photoLinks
-    ?.map((ph) => `<img class="event__photo" src="${ph}" alt="Event photo">`)
+  const picturesTemplate = pictures
+    ?.map((pic) => `<img class="event__photo" src="${pic.src}" alt="${pic.description}">`)
     ?.join('\n');
 
-  const photosContainer = !photosTemplate
+  const picturesContainer = !picturesTemplate
     ? ''
     : `<div class="event__photos-container">
       <div class="event__photos-tape">
-        ${photosTemplate}
+        ${picturesTemplate}
       </div>
     </div>` ;
 
   return `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${description}</p>
-    ${photosContainer}
+    ${picturesContainer}
   </section>`;
 };
