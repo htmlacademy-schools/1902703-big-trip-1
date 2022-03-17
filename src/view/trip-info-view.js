@@ -1,4 +1,5 @@
 import { getMonthDay, getDay } from '../utils.js';
+import { createElement } from '../render.js';
 
 const getTripInfo = (points) => {
   const date_from = points[0].date_from;
@@ -33,7 +34,7 @@ const getTripInfo = (points) => {
   };
 };
 
-export const createTripInfoTemplate = (points) => {
+const createTripInfoTemplate = (points) => {
   const { price, date_from, date_to, route } = getTripInfo(points);
 
   return `<section class="trip-main__trip-info  trip-info">
@@ -48,3 +49,27 @@ export const createTripInfoTemplate = (points) => {
     </p>
   </section>`;
 };
+
+export default class TripInfoView {
+  #element = null;
+
+  constructor(points) {
+    this.points = points;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTripInfoTemplate(this.points);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

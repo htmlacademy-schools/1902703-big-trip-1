@@ -1,4 +1,5 @@
 import { getMonthDay, getDate, getTime, getDatetime, getMinutesInterval } from '../utils.js';
+import { createElement } from '../render.js';
 
 const createOffersTemplate = (offerArray) => {
   const getOffersTemplate = (offers) => {
@@ -27,7 +28,7 @@ const createOffersTemplate = (offerArray) => {
     </ul>`;
 };
 
-export const createDestinationPointTemplate = (point) => {
+const createDestinationPointTemplate = (point) => {
   const { base_price, date_from, date_to, destination, is_favorite, offers, type } = point;
 
   return `<li class="trip-events__item">
@@ -61,3 +62,27 @@ export const createDestinationPointTemplate = (point) => {
     </div>
   </li>`;
 };
+
+export default class PointView {
+  #element = null;
+
+  constructor(point) {
+    this.point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createDestinationPointTemplate(this.point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

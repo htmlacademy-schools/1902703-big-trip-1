@@ -1,6 +1,7 @@
 import { getFormDate, createFormOffersTemplate, createFormDescription } from '../utils.js';
+import { createElement } from '../render.js';
 
-export const createFormEditTemplate = (point) => {
+const createFormEditTemplate = (point) => {
   const { base_price, date_from, date_to, destination, id, offers, type } = point;
 
   return `<li class="trip-events__item">
@@ -109,3 +110,27 @@ export const createFormEditTemplate = (point) => {
     </form>
   </li>`;
 };
+
+export default class FormEditView {
+  #element = null;
+
+  constructor(point) {
+    this.point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFormEditTemplate(this.point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

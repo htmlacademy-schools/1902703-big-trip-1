@@ -1,6 +1,7 @@
 import { getFormDate, createFormOffersTemplate, createFormDescription } from '../utils.js';
+import { createElement } from '../render.js';
 
-export const createFormCreateTemplate = (point) => {
+const createFormCreateTemplate = (point) => {
   const { base_price, date_from, date_to, destination, offers, type } = point;
   const city = destination.name;
 
@@ -107,3 +108,27 @@ export const createFormCreateTemplate = (point) => {
     </form>
   </li>`;
 };
+
+export default class FormCreateView {
+  #element = null;
+
+  constructor(point) {
+    this.point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFormCreateTemplate(this.point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
