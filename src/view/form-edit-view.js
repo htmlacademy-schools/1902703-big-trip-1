@@ -2,7 +2,7 @@ import { getFormDate, createFormOffersTemplate, createFormDescription } from '..
 import { createElement } from '../render.js';
 
 const createFormEditTemplate = (point) => {
-  const { base_price, date_from, date_to, destination, id, offers, type } = point;
+  const { basePrice, dateFrom, dateTo, destination, id, offers, type } = point;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -80,10 +80,10 @@ const createFormEditTemplate = (point) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-${id}">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${getFormDate(date_from)}">
+          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${getFormDate(dateFrom)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-${id}">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${getFormDate(date_to)}">
+          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${getFormDate(dateTo)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -91,7 +91,7 @@ const createFormEditTemplate = (point) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${base_price}">
+          <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

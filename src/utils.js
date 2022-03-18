@@ -56,7 +56,7 @@ export const getMinutesInterval = (beginDate, endDate) =>
   formatMinutesInterval(dayjs(endDate).diff(beginDate, 'm'));
 
 export const sortPointsByDate = (points) =>
-  points.sort((p1, p2) => p1.date_from - p2.date_from);
+  points.sort((p1, p2) => p1.dateFrom - p2.dateFrom);
 
 export const createFormOffersTemplate = (offerArray) => {
   const getOffersTemplate = (type, offers) => {

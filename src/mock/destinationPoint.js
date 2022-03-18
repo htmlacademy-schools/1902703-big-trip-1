@@ -116,6 +116,8 @@ const generateOffers = () => {
   return result;
 };
 
+/* eslint-disable camelcase */
+
 export const generatePoint = () => {
   const time = generateTime();
   return {
