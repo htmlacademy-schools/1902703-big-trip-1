@@ -1,12 +1,15 @@
 import { createElement } from '../render.js';
 
-const createEventListTemplate = () => (
-  `<ul class="trip-events__list">
-  </ul>`
+const createEmptyListTemplate = (message) => (
+  `<p class="trip-events__msg">${message}</p>`
 );
 
-export default class EventListView {
+export default class EmptyListView {
   #element = null;
+
+  constructor(message) {
+    this.message = message;
+  }
 
   get element() {
     if (!this.#element) {
@@ -17,7 +20,7 @@ export default class EventListView {
   }
 
   get template() {
-    return createEventListTemplate();
+    return createEmptyListTemplate(this.message);
   }
 
   removeElement() {
