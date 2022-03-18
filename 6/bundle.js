@@ -1,6 +1,31 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/converter.js":
+/*!**************************!*\
+  !*** ./src/converter.js ***!
+  \**************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "convertPoint": () => (/* binding */ convertPoint)
+/* harmony export */ });
+/* eslint-disable camelcase */
+const convertPoint = point => ({
+  basePrice: point.base_price,
+  dateFrom: point.date_from,
+  dateTo: point.date_to,
+  destination: point.destination,
+  id: point.id,
+  isFavorite: point.is_favorite,
+  offers: point.offers,
+  type: point.type
+});
+
+/***/ }),
+
 /***/ "./src/mock/destinationPoint.js":
 /*!**************************************!*\
   !*** ./src/mock/destinationPoint.js ***!
@@ -87,6 +112,8 @@ const generateOffers = () => {
 
   return result;
 };
+/* eslint-disable camelcase */
+
 
 const generatePoint = () => {
   const time = (0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.generateTime)();
@@ -219,7 +246,7 @@ const formatMinutesInterval = minutes => {
 };
 
 const getMinutesInterval = (beginDate, endDate) => formatMinutesInterval(dayjs__WEBPACK_IMPORTED_MODULE_0___default()(endDate).diff(beginDate, 'm'));
-const sortPointsByDate = points => points.sort((p1, p2) => p1.date_from - p2.date_from);
+const sortPointsByDate = points => points.sort((p1, p2) => p1.dateFrom - p2.dateFrom);
 const createFormOffersTemplate = offerArray => {
   const getOffersTemplate = (type, offers) => {
     if (offers.length === 0) {
@@ -450,9 +477,9 @@ function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { 
 
 const createFormCreateTemplate = point => {
   const {
-    base_price,
-    date_from,
-    date_to,
+    basePrice,
+    dateFrom,
+    dateTo,
     destination,
     offers,
     type
@@ -534,10 +561,10 @@ const createFormCreateTemplate = point => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(date_from)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(dateFrom)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(date_to)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(dateTo)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -545,7 +572,7 @@ const createFormCreateTemplate = point => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${base_price}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -626,9 +653,9 @@ function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { 
 
 const createFormEditTemplate = point => {
   const {
-    base_price,
-    date_from,
-    date_to,
+    basePrice,
+    dateFrom,
+    dateTo,
     destination,
     id,
     offers,
@@ -710,10 +737,10 @@ const createFormEditTemplate = point => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-${id}">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(date_from)}">
+          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(dateFrom)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-${id}">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(date_to)}">
+          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getFormDate)(dateTo)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -721,7 +748,7 @@ const createFormEditTemplate = point => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${base_price}">
+          <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -835,34 +862,34 @@ const createOffersTemplate = offerArray => {
 
 const createDestinationPointTemplate = point => {
   const {
-    base_price,
-    date_from,
-    date_to,
+    basePrice,
+    dateFrom,
+    dateTo,
     destination,
-    is_favorite,
+    isFavorite,
     offers,
     type
   } = point;
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDate)(date_from)}">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getMonthDay)(date_from)}</time>
+      <time class="event__date" datetime="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDate)(dateFrom)}">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getMonthDay)(dateFrom)}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDatetime)(date_from)}">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getTime)(date_from)}</time>
+          <time class="event__start-time" datetime="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDatetime)(dateFrom)}">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getTime)(dateFrom)}</time>
           &mdash;
-          <time class="event__end-time" datetime="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDatetime)(date_to)}">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getTime)(date_to)}</time>
+          <time class="event__end-time" datetime="${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDatetime)(dateTo)}">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getTime)(dateTo)}</time>
         </p>
-        <p class="event__duration">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getMinutesInterval)(date_from, date_to)}</p>
+        <p class="event__duration">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getMinutesInterval)(dateFrom, dateTo)}</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${base_price}</span>
+        &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
       </p>
       ${createOffersTemplate(offers)}
-      <button class="event__favorite-btn ${is_favorite ? 'event__favorite-btn--active' : ''}" type="button">
+      <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -1086,14 +1113,14 @@ function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { 
 
 
 const getTripInfo = points => {
-  const date_from = points[0].date_from;
-  const date_to = points[points.length - 1].date_to;
+  const dateFrom = points[0].dateFrom;
+  const dateTo = points[points.length - 1].dateTo;
   let price = 0;
   let route = [];
   let lastCity = '';
 
   for (const point of points) {
-    price += point.base_price;
+    price += point.basePrice;
     point.offers.forEach(offerStruct => offerStruct.offers.forEach(offer => {
       if (offer.isActive) {
         price += offer.price;
@@ -1110,8 +1137,8 @@ const getTripInfo = points => {
   route = route.join(' &mdash; ');
   return {
     price,
-    date_from,
-    date_to,
+    dateFrom,
+    dateTo,
     route
   };
 };
@@ -1119,15 +1146,15 @@ const getTripInfo = points => {
 const createTripInfoTemplate = points => {
   const {
     price,
-    date_from,
-    date_to,
+    dateFrom,
+    dateTo,
     route
   } = getTripInfo(points);
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${route}</h1>
 
-      <p class="trip-info__dates">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getMonthDay)(date_from)}&nbsp;&mdash;&nbsp;${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDay)(date_to)}</p>
+      <p class="trip-info__dates">${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getMonthDay)(dateFrom)}&nbsp;&mdash;&nbsp;${(0,_utils_js__WEBPACK_IMPORTED_MODULE_0__.getDay)(dateTo)}</p>
     </div>
 
     <p class="trip-info__cost">
@@ -1157,7 +1184,13 @@ class TripInfoView {
   }
 
   get template() {
-    return createTripInfoTemplate(this.points);
+    var _this$points;
+
+    if (((_this$points = this.points) === null || _this$points === void 0 ? void 0 : _this$points.length) > 0) {
+      return createTripInfoTemplate(this.points);
+    }
+
+    return ' ';
   }
 
   removeElement() {
@@ -1254,17 +1287,20 @@ var __webpack_exports__ = {};
   !*** ./src/main.js ***!
   \*********************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _render_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./render.js */ "./src/render.js");
-/* harmony import */ var _view_event_list_view_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./view/event-list-view.js */ "./src/view/event-list-view.js");
-/* harmony import */ var _view_filter_view_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view/filter-view.js */ "./src/view/filter-view.js");
-/* harmony import */ var _view_form_create_view_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./view/form-create-view.js */ "./src/view/form-create-view.js");
-/* harmony import */ var _view_form_edit_view_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./view/form-edit-view.js */ "./src/view/form-edit-view.js");
-/* harmony import */ var _view_point_view_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./view/point-view.js */ "./src/view/point-view.js");
-/* harmony import */ var _view_site_menu_view_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./view/site-menu-view.js */ "./src/view/site-menu-view.js");
-/* harmony import */ var _view_sort_view_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/sort-view.js */ "./src/view/sort-view.js");
-/* harmony import */ var _view_trip_info_view_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./view/trip-info-view.js */ "./src/view/trip-info-view.js");
+/* harmony import */ var _view_event_list_view_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./view/event-list-view.js */ "./src/view/event-list-view.js");
+/* harmony import */ var _view_filter_view_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./view/filter-view.js */ "./src/view/filter-view.js");
+/* harmony import */ var _view_form_create_view_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view/form-create-view.js */ "./src/view/form-create-view.js");
+/* harmony import */ var _view_form_edit_view_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./view/form-edit-view.js */ "./src/view/form-edit-view.js");
+/* harmony import */ var _view_point_view_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./view/point-view.js */ "./src/view/point-view.js");
+/* harmony import */ var _view_site_menu_view_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./view/site-menu-view.js */ "./src/view/site-menu-view.js");
+/* harmony import */ var _view_sort_view_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./view/sort-view.js */ "./src/view/sort-view.js");
+/* harmony import */ var _view_trip_info_view_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/trip-info-view.js */ "./src/view/trip-info-view.js");
+/* harmony import */ var _render_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./render.js */ "./src/render.js");
 /* harmony import */ var _mock_destinationPoint_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./mock/destinationPoint.js */ "./src/mock/destinationPoint.js");
 /* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+/* harmony import */ var _converter_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./converter.js */ "./src/converter.js");
+// import EmptyListView from './view/empty-list-view.js';
+
 
 
 
@@ -1279,22 +1315,31 @@ __webpack_require__.r(__webpack_exports__);
 const POINT_COUNT = 20;
 const points = (0,_utils_js__WEBPACK_IMPORTED_MODULE_10__.sortPointsByDate)(Array.from({
   length: POINT_COUNT
-}, _mock_destinationPoint_js__WEBPACK_IMPORTED_MODULE_9__.generatePoint));
+}, () => (0,_converter_js__WEBPACK_IMPORTED_MODULE_11__.convertPoint)((0,_mock_destinationPoint_js__WEBPACK_IMPORTED_MODULE_9__.generatePoint)())));
 const tripMainElement = document.querySelector('.trip-main');
 const siteMenuElement = tripMainElement.querySelector('.trip-controls__navigation');
 const filterElement = tripMainElement.querySelector('.trip-controls__filters');
-(0,_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(tripMainElement, new _view_trip_info_view_js__WEBPACK_IMPORTED_MODULE_8__["default"](points).element, _render_js__WEBPACK_IMPORTED_MODULE_0__.RenderPosition.AFTERBEGIN);
-(0,_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(siteMenuElement, new _view_site_menu_view_js__WEBPACK_IMPORTED_MODULE_6__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_0__.RenderPosition.BEFOREEND);
-(0,_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(filterElement, new _view_filter_view_js__WEBPACK_IMPORTED_MODULE_2__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_0__.RenderPosition.BEFOREEND);
 const tripEventsElement = document.querySelector('.trip-events');
-(0,_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(tripEventsElement, new _view_sort_view_js__WEBPACK_IMPORTED_MODULE_7__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_0__.RenderPosition.BEFOREEND);
-(0,_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(tripEventsElement, new _view_event_list_view_js__WEBPACK_IMPORTED_MODULE_1__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_0__.RenderPosition.BEFOREEND);
+(0,_render_js__WEBPACK_IMPORTED_MODULE_8__.renderElement)(tripMainElement, new _view_trip_info_view_js__WEBPACK_IMPORTED_MODULE_7__["default"](points).element, _render_js__WEBPACK_IMPORTED_MODULE_8__.RenderPosition.AFTERBEGIN);
+(0,_render_js__WEBPACK_IMPORTED_MODULE_8__.renderElement)(siteMenuElement, new _view_site_menu_view_js__WEBPACK_IMPORTED_MODULE_5__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_8__.RenderPosition.BEFOREEND);
+(0,_render_js__WEBPACK_IMPORTED_MODULE_8__.renderElement)(filterElement, new _view_filter_view_js__WEBPACK_IMPORTED_MODULE_1__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_8__.RenderPosition.BEFOREEND); // if (points?.length > 0) {
+
+(0,_render_js__WEBPACK_IMPORTED_MODULE_8__.renderElement)(tripEventsElement, new _view_sort_view_js__WEBPACK_IMPORTED_MODULE_6__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_8__.RenderPosition.BEFOREEND);
+(0,_render_js__WEBPACK_IMPORTED_MODULE_8__.renderElement)(tripEventsElement, new _view_event_list_view_js__WEBPACK_IMPORTED_MODULE_0__["default"]().element, _render_js__WEBPACK_IMPORTED_MODULE_8__.RenderPosition.BEFOREEND); // }
+// else {
+//   const message = 'Click New Event to create your first point';
+//   renderElement(tripEventsElement, new EmptyListView(message).element, RenderPosition.BEFOREEND);
+// }
+
 const eventListElement = tripEventsElement.querySelector('.trip-events__list');
-(0,_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(eventListElement, new _view_form_create_view_js__WEBPACK_IMPORTED_MODULE_3__["default"](points[0]).element, _render_js__WEBPACK_IMPORTED_MODULE_0__.RenderPosition.BEFOREEND);
+
+if ((points === null || points === void 0 ? void 0 : points.length) > 0) {
+  (0,_render_js__WEBPACK_IMPORTED_MODULE_8__.renderElement)(eventListElement, new _view_form_create_view_js__WEBPACK_IMPORTED_MODULE_2__["default"](points[0]).element, _render_js__WEBPACK_IMPORTED_MODULE_8__.RenderPosition.BEFOREEND);
+}
 
 const renderPoint = (listElement, point) => {
-  const pointComponent = new _view_point_view_js__WEBPACK_IMPORTED_MODULE_5__["default"](point);
-  const formEditComponent = new _view_form_edit_view_js__WEBPACK_IMPORTED_MODULE_4__["default"](point);
+  const pointComponent = new _view_point_view_js__WEBPACK_IMPORTED_MODULE_4__["default"](point);
+  const formEditComponent = new _view_form_edit_view_js__WEBPACK_IMPORTED_MODULE_3__["default"](point);
 
   const replacePointToForm = () => {
     listElement.replaceChild(formEditComponent.element, pointComponent.element);
@@ -1302,30 +1347,27 @@ const renderPoint = (listElement, point) => {
 
   const replaceFormToPoint = () => {
     listElement.replaceChild(pointComponent.element, formEditComponent.element);
-  };
+  }; // const onEscKeyDown = (evt) => {
+  //   if (evt.key === 'Escape' || evt.key === 'Esc') {
+  //     evt.preventDefault();
+  //     replaceFormToPoint();
+  //     document.removeEventListener('keydown', onEscKeyDown);
+  //   }
+  // };
 
-  const onEscKeyDown = evt => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    }
-  };
 
   pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replacePointToForm();
-    document.addEventListener('keydown', onEscKeyDown);
+    replacePointToForm(); // document.addEventListener('keydown', onEscKeyDown);
   });
   formEditComponent.element.querySelector('form').addEventListener('submit', evt => {
     evt.preventDefault();
-    replaceFormToPoint();
-    document.removeEventListener('keydown', onEscKeyDown);
-  });
-  formEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replaceFormToPoint();
-    document.removeEventListener('keydown', onEscKeyDown);
-  });
-  (0,_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(listElement, pointComponent.element, _render_js__WEBPACK_IMPORTED_MODULE_0__.RenderPosition.BEFOREEND);
+    replaceFormToPoint(); // document.removeEventListener('keydown', onEscKeyDown);
+  }); // formEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  //   replaceFormToPoint();
+  //   document.removeEventListener('keydown', onEscKeyDown);
+  // });
+
+  (0,_render_js__WEBPACK_IMPORTED_MODULE_8__.renderElement)(listElement, pointComponent.element, _render_js__WEBPACK_IMPORTED_MODULE_8__.RenderPosition.BEFOREEND);
 };
 
 for (let i = 0; i < POINT_COUNT; i++) {
