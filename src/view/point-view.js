@@ -1,4 +1,4 @@
-import { getMonthDay, getDate, getTime, getDatetime, getMinutesInterval } from '../utils.js';
+import { getMonthDay, getDate, getTime, getDatetime, getMinutesInterval } from '../utils/common.js';
 import AbstractView from './abstract-view.js';
 
 const createOffersTemplate = (offerArray) => {

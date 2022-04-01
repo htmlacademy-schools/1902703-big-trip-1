@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomElement, generateTime } from '../utils.js';
+import { getRandomInteger, getRandomElement, generateTime } from '../utils/common.js';
 
 const generatePrice = () => getRandomInteger(2, 60) * 10;
 
