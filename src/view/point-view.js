@@ -1,5 +1,5 @@
 import { getMonthDay, getDate, getTime, getDatetime, getMinutesInterval } from '../utils.js';
-import { createElement } from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createOffersTemplate = (offerArray) => {
   const getOffersTemplate = (offers) => {
@@ -63,26 +63,15 @@ const createDestinationPointTemplate = (point) => {
   </li>`;
 };
 
-export default class PointView {
-  #element = null;
+export default class PointView extends AbstractView {
+  #point = null;
 
   constructor(point) {
-    this.point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+    super();
+    this.#point = point;
   }
 
   get template() {
-    return createDestinationPointTemplate(this.point);
-  }
-
-  removeElement() {
-    this.#element = null;
+    return createDestinationPointTemplate(this.#point);
   }
 }

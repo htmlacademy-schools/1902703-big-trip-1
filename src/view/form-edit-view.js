@@ -1,5 +1,5 @@
 import { getFormDate, createFormOffersTemplate, createFormDescription } from '../utils.js';
-import { createElement } from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createFormEditTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, id, offers, type } = point;
@@ -111,26 +111,15 @@ const createFormEditTemplate = (point) => {
   </li>`;
 };
 
-export default class FormEditView {
-  #element = null;
+export default class FormEditView extends AbstractView {
+  #point = null;
 
   constructor(point) {
-    this.point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+    super();
+    this.#point = point;
   }
 
   get template() {
-    return createFormEditTemplate(this.point);
-  }
-
-  removeElement() {
-    this.#element = null;
+    return createFormEditTemplate(this.#point);
   }
 }
