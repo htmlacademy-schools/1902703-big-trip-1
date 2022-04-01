@@ -1,4 +1,4 @@
-import { getMonthDay, getDay } from '../utils/common.js';
+import { getMonthDay, getDay } from '../utils/date-time.js';
 import AbstractView from './abstract-view.js';
 
 const getTripInfo = (points) => {

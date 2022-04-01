@@ -1,4 +1,5 @@
-import { getFormDate, createFormOffersTemplate, createFormDescription } from '../utils/common.js';
+import { createFormOffersTemplate, createFormDescription } from '../utils/point-tools.js';
+import { getFormDate } from '../utils/date-time.js';
 import AbstractView from './abstract-view.js';
 
 const createFormEditTemplate = (point) => {

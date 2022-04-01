@@ -9,7 +9,7 @@ import SortView from './view/sort-view.js';
 import TripInfoView from './view/trip-info-view.js';
 import { RenderPosition, render } from './utils/render.js';
 import { generatePoint } from './mock/destinationPoint.js';
-import { sortPointsByDate } from './utils/common.js';
+import { sortPointsByDate } from './utils/point-tools.js';
 import { convertPoint } from './utils/converter.js';
 
 const POINT_COUNT = 20;
