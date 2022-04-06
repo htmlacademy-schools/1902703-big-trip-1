@@ -7,10 +7,10 @@ import PointView from './view/point-view.js';
 import SiteMenuView from './view/site-menu-view.js';
 import SortView from './view/sort-view.js';
 import TripInfoView from './view/trip-info-view.js';
-import { RenderPosition, renderElement } from './render.js';
+import { RenderPosition, render } from './utils/render.js';
 import { generatePoint } from './mock/destinationPoint.js';
-import { sortPointsByDate } from './utils.js';
-import { convertPoint } from './converter.js';
+import { sortPointsByDate } from './utils/point-tools.js';
+import { convertPoint } from './utils/converter.js';
 
 const POINT_COUNT = 20;
 const points = sortPointsByDate(Array.from({ length: POINT_COUNT }, () => convertPoint(generatePoint())));
@@ -20,22 +20,22 @@ const siteMenuElement = tripMainElement.querySelector('.trip-controls__navigatio
 const filterElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
 
-renderElement(tripMainElement, new TripInfoView(points).element, RenderPosition.AFTERBEGIN);
-renderElement(siteMenuElement, new SiteMenuView().element, RenderPosition.BEFOREEND);
-renderElement(filterElement, new FilterView().element, RenderPosition.BEFOREEND);
+render(tripMainElement, new TripInfoView(points), RenderPosition.AFTERBEGIN);
+render(siteMenuElement, new SiteMenuView(), RenderPosition.BEFOREEND);
+render(filterElement, new FilterView(), RenderPosition.BEFOREEND);
 
 if (points?.length > 0) {
-  renderElement(tripEventsElement, new SortView().element, RenderPosition.BEFOREEND);
-  renderElement(tripEventsElement, new EventListView().element, RenderPosition.BEFOREEND);
+  render(tripEventsElement, new SortView(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new EventListView(), RenderPosition.BEFOREEND);
 }
 else {
   const message = 'Click New Event to create your first point';
-  renderElement(tripEventsElement, new EmptyListView(message).element, RenderPosition.BEFOREEND);
+  render(tripEventsElement, new EmptyListView(message), RenderPosition.BEFOREEND);
 }
 
 const eventListElement = tripEventsElement.querySelector('.trip-events__list');
 
-if (points?.length > 0) { renderElement(eventListElement, new FormCreateView(points[0]).element, RenderPosition.BEFOREEND); }
+if (points?.length > 0) { render(eventListElement, new FormCreateView(points[0]), RenderPosition.BEFOREEND); }
 
 const renderPoint = (listElement, point) => {
   const pointComponent = new PointView(point);
@@ -57,23 +57,22 @@ const renderPoint = (listElement, point) => {
     }
   };
 
-  pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  pointComponent.setClickHandler(() => {
     replacePointToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  formEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  formEditComponent.setFormSubmitHandler(() => {
     replaceFormToPoint();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  formEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  formEditComponent.setClickHandler(() => {
     replaceFormToPoint();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  renderElement(listElement, pointComponent.element, RenderPosition.BEFOREEND);
+  render(listElement, pointComponent.element, RenderPosition.BEFOREEND);
 };
 
 for (let i = 0; i < POINT_COUNT; i++) {

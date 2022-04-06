@@ -1,5 +1,6 @@
-import { getFormDate, createFormOffersTemplate, createFormDescription } from '../utils.js';
-import { createElement } from '../render.js';
+import { createFormOffersTemplate, createFormDescription } from '../utils/point-tools.js';
+import { getFormDate } from '../utils/date-time.js';
+import AbstractView from './abstract-view.js';
 
 const createFormEditTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, id, offers, type } = point;
@@ -111,26 +112,35 @@ const createFormEditTemplate = (point) => {
   </li>`;
 };
 
-export default class FormEditView {
-  #element = null;
+export default class FormEditView extends AbstractView {
+  #point = null;
 
   constructor(point) {
-    this.point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+    super();
+    this.#point = point;
   }
 
   get template() {
-    return createFormEditTemplate(this.point);
+    return createFormEditTemplate(this.#point);
   }
 
-  removeElement() {
-    this.#element = null;
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+  }
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  }
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 }
