@@ -2,11 +2,10 @@ import EmptyListView from '../view/empty-list-view.js';
 import EventListView from '../view/event-list-view.js';
 import FilterView from '../view/filter-view.js';
 import FormCreateView from '../view/form-create-view.js';
-import FormEditView from '../view/form-edit-view.js';
-import PointView from '../view/point-view.js';
 import SiteMenuView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
+import PointPresenter from './point-presenter';
 import { RenderPosition, render } from '../utils/render.js';
 
 export default class TripPresenter {
@@ -52,47 +51,14 @@ export default class TripPresenter {
     render(this.#eventListElement, new FormCreateView(this.#points[0]), RenderPosition.AFTERBEGIN);
   }
 
-  #renderPoint = (listElement, point) => {
-    const pointComponent = new PointView(point);
-    const formEditComponent = new FormEditView(point);
-
-    const replacePointToForm = () => {
-      listElement.replaceChild(formEditComponent.element, pointComponent.element);
-    };
-
-    const replaceFormToPoint = () => {
-      listElement.replaceChild(pointComponent.element, formEditComponent.element);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    pointComponent.setClickHandler(() => {
-      replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    formEditComponent.setFormSubmitHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    formEditComponent.setClickHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(listElement, pointComponent, RenderPosition.BEFOREEND);
+  #renderPoint = (point) => {
+    const pointPresenter = new PointPresenter(this.#eventListElement);
+    pointPresenter.init(point);
   }
 
   #renderPoints = () => {
     for (let i = 0; i < this.#points.length; i++) {
-      this.#renderPoint(this.#eventListElement, this.#points[i]);
+      this.#renderPoint(this.#points[i]);
     }
   }
 
