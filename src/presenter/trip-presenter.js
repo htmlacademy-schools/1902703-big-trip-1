@@ -6,6 +6,7 @@ import SiteMenuView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import PointPresenter from './point-presenter';
+import { updateItem } from '../utils/common.js';
 import { RenderPosition, render } from '../utils/render.js';
 
 export default class TripPresenter {
@@ -16,6 +17,7 @@ export default class TripPresenter {
   #eventListElement = null;
 
   #points = [];
+  #pointPresenter = new Map();
 
   constructor() {
     this.#tripMainElement = document.querySelector('.trip-main');
@@ -29,6 +31,11 @@ export default class TripPresenter {
 
     render(this.#tripMainElement, new TripInfoView(this.#points), RenderPosition.AFTERBEGIN);
     this.#renderTrip();
+  }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   }
 
   #renderNavigation = () => {
@@ -52,8 +59,9 @@ export default class TripPresenter {
   }
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#eventListElement);
+    const pointPresenter = new PointPresenter(this.#eventListElement, this.#handlePointChange);
     pointPresenter.init(point);
+    this.#pointPresenter.set(point.id, pointPresenter);
   }
 
   #renderPoints = () => {
@@ -65,6 +73,11 @@ export default class TripPresenter {
   #renderEmpty = () => {
     const message = 'Click New Event to create your first point';
     render(this.#tripEventsElement, new EmptyListView(message), RenderPosition.BEFOREEND);
+  }
+
+  #clearTaskList = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
   }
 
   #renderTrip = () => {
