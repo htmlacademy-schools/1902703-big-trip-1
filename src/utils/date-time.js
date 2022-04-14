@@ -41,5 +41,5 @@ const formatMinutesInterval = (minutes) => {
     + `${getFormattedTime(minutes, 'M')}`;
 };
 
-export const getMinutesInterval = (beginDate, endDate) =>
+export const getTimeInterval = (beginDate, endDate) =>
   formatMinutesInterval(dayjs(endDate).diff(beginDate, 'm'));
