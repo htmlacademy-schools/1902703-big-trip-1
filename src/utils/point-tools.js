@@ -1,5 +1,9 @@
-export const sortPointsByDate = (points) =>
-  points.sort((p1, p2) => p1.dateFrom - p2.dateFrom);
+export const sortPointsByDay = (p1, p2) => p1.dateFrom - p2.dateFrom;
+
+export const sortPointsByTime = (p1, p2) =>
+  (p2.dateTo - p2.dateFrom) - (p1.dateTo - p1.dateFrom);
+
+export const sortPointsByPrice = (p1, p2) => p2.basePrice - p1.basePrice;
 
 export const createFormOffersTemplate = (offerArray) => {
   const getOffersTemplate = (type, offers) => {
