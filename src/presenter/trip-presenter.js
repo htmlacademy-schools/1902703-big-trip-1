@@ -53,7 +53,7 @@ export default class TripPresenter {
     this.#points = updateItem(this.#points, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
 
-    let oldTripComponent = this.#tripInfoComponent;
+    const oldTripComponent = this.#tripInfoComponent;
     this.#tripInfoComponent = new TripInfoView(this.#points);
     replace(this.#tripInfoComponent, oldTripComponent);
   }

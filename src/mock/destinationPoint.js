@@ -79,14 +79,12 @@ const types = [
   'restaurant'
 ];
 
-const generateType = () => {
-  return getRandomElement(types);
-};
+const generateType = () => getRandomElement(types);
 
 const generateOffers = () => {
   const result = [];
 
-  for (let type of types) {
+  for (const type of types) {
     const offers = [];
     const titles = [
       'Add luggage',

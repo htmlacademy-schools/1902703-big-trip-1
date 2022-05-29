@@ -22,16 +22,16 @@ export const createOffersTemplate = (offerArray, type) => {
     return offersToRender.map((offer) => getListItemTemplate(offer)).join('\n');
   };
 
-  let typeOffers = offerArray.filter(offerStruct => offerStruct.type === type);
+  const typeOffers = offerArray.filter((offerStruct) => offerStruct.type === type);
 
   if (typeOffers.length > 0) {
     const offersTemplate = getOffersTemplate(typeOffers[0].offers);
 
     if (offersTemplate !== '')
-      return `<h4 class="visually-hidden">Offers:</h4>
+    {return `<h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
         ${offersTemplate}
-        </ul>`;
+        </ul>`;}
   }
 
   return '';
@@ -57,18 +57,18 @@ export const createFormOffersTemplate = (offerArray, type) => {
     return offers.map((offer) => getListItemTemplate(offer)).join('\n');
   };
 
-  let typeOffers = offerArray.filter(offerStruct => offerStruct.type === type);
+  const typeOffers = offerArray.filter((offerStruct) => offerStruct.type === type);
 
   if (typeOffers.length > 0) {
     const offersTemplate = getOffersTemplate(typeOffers[0].offers);
 
     if (offersTemplate !== '')
-      return `<section class="event__section  event__section--offers">
+    {return `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
         ${offersTemplate}
         </div>
-      </section>`;
+      </section>`;}
   }
 
   return '';
