@@ -122,9 +122,9 @@ export default class FormEditView extends SmartView {
     return createFormEditTemplate(this._point);
   }
 
-  #clickHandler = (evt) => {
+  #formCloseHandler = (evt) => {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.closeClick();
   }
 
   #formSubmitHandler = (evt) => {
@@ -134,7 +134,21 @@ export default class FormEditView extends SmartView {
 
   #changeTypeHandler = (evt) => {
     evt.preventDefault();
-    this.updateData({ type: evt.target.value });
+
+    const type = evt.target.value;
+    const offers = JSON.parse(JSON.stringify(this._point.offers));
+
+    for (const offerStruct of offers) {
+      if (offerStruct.type !== type) { continue; }
+
+      offerStruct.offers.forEach((offer) => {
+        offer.isActive = false;
+      });
+
+      break;
+    }
+
+    this.updateData({ type, offers });
   }
 
   #changeCityHandler = (evt) => {
@@ -161,8 +175,8 @@ export default class FormEditView extends SmartView {
   }
 
   setFormCloseHandler = (callback) => {
-    this._callback.click = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+    this._callback.closeClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
   }
 
   setFormSubmitHandler = (callback) => {
