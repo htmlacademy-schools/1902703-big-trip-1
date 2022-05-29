@@ -103,7 +103,7 @@ const createFormEditTemplate = (point) => {
       </header>
       <section class="event__details">
 
-      ${createFormOffersTemplate(offers)}
+      ${createFormOffersTemplate(offers, type)}
 
       ${createFormDescription(destination.description)}
         
@@ -135,13 +135,29 @@ export default class FormEditView extends SmartView {
   #changeTypeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({ type: evt.target.value });
-    // обновить соответствующий типу набор дополнительных опций
   }
 
   #changeCityHandler = (evt) => {
     evt.preventDefault();
     this.updateData({ destination: { ...this._point.destination, ...{ name: evt.target.value } } });
     // обновить описание и фотографии
+  }
+
+  #changeOptionsHandler = (evt) => {
+    evt.preventDefault();
+    let splited = evt.target.id.split('-');
+    let index = +splited[splited.length - 1] - 1;
+    let offers = structuredClone(this._point.offers);
+
+    for (let offerStruct of offers) {
+      if (offerStruct.type !== this._point.type) continue;
+
+      let e = offerStruct.offers[index];
+      e.isActive = !e.isActive;
+      break;
+    }
+
+    this.updateData({ offers });
   }
 
   setFormCloseHandler = (callback) => {
@@ -157,6 +173,10 @@ export default class FormEditView extends SmartView {
   setInnerHandlers = () => {
     this.element.querySelector('.event__type-list').addEventListener('input', this.#changeTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeCityHandler);
+
+    var offers = this.element.querySelector('.event__available-offers');
+    if (offers)
+      offers.addEventListener('input', this.#changeOptionsHandler);
   }
 
   reset = (point) => {

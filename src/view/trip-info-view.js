@@ -11,11 +11,16 @@ const getTripInfo = (points) => {
 
   for (const point of points) {
     price += point.basePrice;
-    point.offers
-      .forEach((offerStruct) => offerStruct.offers
+
+    let typeOffers = point.offers.filter(offerStruct => offerStruct.type === point.type);
+    if (typeOffers.length > 0) {
+      typeOffers[0].offers
         .forEach((offer) => {
-          if (offer.isActive) { price += offer.price; }
-        }));
+          if (offer.isActive) {
+            price += offer.price;
+          }
+        });
+    }
 
     const newCity = point.destination.name;
     if (newCity !== lastCity) {

@@ -5,8 +5,40 @@ export const sortPointsByTime = (p1, p2) =>
 
 export const sortPointsByPrice = (p1, p2) => p2.basePrice - p1.basePrice;
 
-export const createFormOffersTemplate = (offerArray) => {
-  const getOffersTemplate = (type, offers) => {
+export const createOffersTemplate = (offerArray, type) => {
+  const getOffersTemplate = (offers) => {
+    const offersToRender = offers.filter((offer) => offer.isActive);
+    if (offersToRender.length === 0) { return ''; }
+
+    const getListItemTemplate = (offer) => {
+      const { title, price } = offer;
+      return `<li class="event__offer">
+      <span class="event__offer-title">${title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${price}</span>
+    </li>`;
+    };
+
+    return offersToRender.map((offer) => getListItemTemplate(offer)).join('\n');
+  };
+
+  let typeOffers = offerArray.filter(offerStruct => offerStruct.type === type);
+
+  if (typeOffers.length > 0) {
+    const offersTemplate = getOffersTemplate(typeOffers[0].offers);
+
+    if (offersTemplate !== '')
+      return `<h4 class="visually-hidden">Offers:</h4>
+        <ul class="event__selected-offers">
+        ${offersTemplate}
+        </ul>`;
+  }
+
+  return '';
+};
+
+export const createFormOffersTemplate = (offerArray, type) => {
+  const getOffersTemplate = (offers) => {
     if (offers.length === 0) { return ''; }
 
     const getListItemTemplate = (offer) => {
@@ -25,16 +57,21 @@ export const createFormOffersTemplate = (offerArray) => {
     return offers.map((offer) => getListItemTemplate(offer)).join('\n');
   };
 
-  const offersToRender = offerArray
-    .map((offerStruct) => getOffersTemplate(offerStruct.type, offerStruct.offers))
-    .join('\n');
+  let typeOffers = offerArray.filter(offerStruct => offerStruct.type === type);
 
-  return `<section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-    <div class="event__available-offers">
-    ${offersToRender}
-    </div>
-  </section>`;
+  if (typeOffers.length > 0) {
+    const offersTemplate = getOffersTemplate(typeOffers[0].offers);
+
+    if (offersTemplate !== '')
+      return `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">
+        ${offersTemplate}
+        </div>
+      </section>`;
+  }
+
+  return '';
 };
 
 export const createFormDescription = (description, pictures) => {
