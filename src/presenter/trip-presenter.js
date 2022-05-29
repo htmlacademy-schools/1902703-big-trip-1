@@ -7,7 +7,7 @@ import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import PointPresenter from './point-presenter';
 import { updateItem } from '../utils/common.js';
-import { RenderPosition, render } from '../utils/render.js';
+import { RenderPosition, render, replace } from '../utils/render.js';
 import { sortPointsByDay, sortPointsByTime, sortPointsByPrice } from '../utils/point-tools.js';
 import { SortType } from '../const.js';
 
@@ -18,6 +18,7 @@ export default class TripPresenter {
   #tripEventsElement = null;
   #eventListElement = null;
 
+  #tripInfoComponent = null;
   #siteMenuComponent = new SiteMenuView();
   #filterConponent = new FilterView();
   #sortComponent = new SortView();
@@ -38,8 +39,9 @@ export default class TripPresenter {
     this.#points = [...points];
     this.#currentSortType = SortType.DAY;
     this.#sortPoints(this.#currentSortType);
+    this.#tripInfoComponent = new TripInfoView(this.#points);
 
-    render(this.#tripMainElement, new TripInfoView(this.#points), RenderPosition.AFTERBEGIN);
+    render(this.#tripMainElement, this.#tripInfoComponent, RenderPosition.AFTERBEGIN);
     this.#renderTrip();
   }
 
@@ -50,6 +52,10 @@ export default class TripPresenter {
   #handlePointChange = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+
+    let oldTripComponent = this.#tripInfoComponent;
+    this.#tripInfoComponent = new TripInfoView(this.#points);
+    replace(this.#tripInfoComponent, oldTripComponent);
   }
 
   #renderNavigation = () => {

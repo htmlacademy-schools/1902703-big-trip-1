@@ -135,6 +135,13 @@ export default class FormEditView extends SmartView {
   #changeTypeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({ type: evt.target.value });
+    // обновить соответствующий типу набор дополнительных опций
+  }
+
+  #changeCityHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({ destination: { ...this._point.destination, ...{ name: evt.target.value } } });
+    // обновить описание и фотографии
   }
 
   setFormCloseHandler = (callback) => {
@@ -149,6 +156,7 @@ export default class FormEditView extends SmartView {
 
   setInnerHandlers = () => {
     this.element.querySelector('.event__type-list').addEventListener('input', this.#changeTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeCityHandler);
   }
 
   reset = (point) => {
