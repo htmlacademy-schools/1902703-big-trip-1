@@ -1,6 +1,6 @@
 import { createFormOffersTemplate, createFormDescription } from '../utils/point-tools.js';
 import { getFormDate } from '../utils/date-time.js';
-import AbstractView from './abstract-view.js';
+import SmartView from './smart-view.js';
 
 const createFormEditTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, id, offers, type } = point;
@@ -45,7 +45,7 @@ const createFormEditTemplate = (point) => {
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-flight-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                <input id="event-type-flight-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
                 <label class="event__type-label  event__type-label--flight" for="event-type-flight-${id}">Flight</label>
               </div>
 
@@ -112,16 +112,14 @@ const createFormEditTemplate = (point) => {
   </li>`;
 };
 
-export default class FormEditView extends AbstractView {
-  #point = null;
-
+export default class FormEditView extends SmartView {
   constructor(point) {
     super();
-    this.#point = point;
+    this._point = point;
   }
 
   get template() {
-    return createFormEditTemplate(this.#point);
+    return createFormEditTemplate(this._point);
   }
 
   #clickHandler = (evt) => {
@@ -131,7 +129,12 @@ export default class FormEditView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#point);
+    this._callback.formSubmit(this._point);
+  }
+
+  #changeTypeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({ type: evt.target.value });
   }
 
   setFormCloseHandler = (callback) => {
@@ -142,5 +145,13 @@ export default class FormEditView extends AbstractView {
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  setInnerHandlers = () => {
+    this.element.querySelector('.event__type-list').addEventListener('input', this.#changeTypeHandler);
+  }
+
+  reset = (point) => {
+    this.updateData(point);
   }
 }

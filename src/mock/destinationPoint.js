@@ -1,4 +1,4 @@
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 import { getRandomInteger, getRandomElement } from '../utils/common.js';
 import { generateTime } from '../utils/date-time.js';
 
@@ -54,7 +54,7 @@ const generatePictures = () => {
   for (let i = 0; i < phCount; i++) {
     result.push({
       src: `http://picsum.photos/248/152?r=${Math.random()}`,
-      description: `Picture ${i}`
+      description: `Picture ${i}.`
     });
   }
 
