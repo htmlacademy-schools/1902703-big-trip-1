@@ -1,9 +1,15 @@
-import { getMonthDay, getDay } from '../utils/date-time.js';
+import { getDayMonth, getMonthDay, getDay } from '../utils/date-time.js';
+import { sortPointsByDay } from '../utils/point-tools.js';
 import AbstractView from './abstract-view.js';
 
 const getTripInfo = (points) => {
+  points.sort(sortPointsByDay);
+
   const dateFrom = points[0].dateFrom;
   const dateTo = points[points.length - 1].dateTo;
+  const dates = dateFrom.getMonth() === dateTo.getMonth()
+    ? `${getMonthDay(dateFrom)}&nbsp;&mdash;&nbsp;${getDay(dateTo)}`
+    : `${getDayMonth(dateFrom)}&nbsp;&mdash;&nbsp;${getDayMonth(dateTo)}`;
 
   let price = 0;
   let route = [];
@@ -11,11 +17,16 @@ const getTripInfo = (points) => {
 
   for (const point of points) {
     price += point.basePrice;
-    point.offers
-      .forEach((offerStruct) => offerStruct.offers
+
+    const typeOffers = point.offers.filter((offerStruct) => offerStruct.type === point.type);
+    if (typeOffers.length > 0) {
+      typeOffers[0].offers
         .forEach((offer) => {
-          if (offer.isActive) { price += offer.price; }
-        }));
+          if (offer.isActive) {
+            price += offer.price;
+          }
+        });
+    }
 
     const newCity = point.destination.name;
     if (newCity !== lastCity) {
@@ -24,24 +35,25 @@ const getTripInfo = (points) => {
     }
   }
 
-  route = route.join(' &mdash; ');
+  route = route.length > 3
+    ? `${route[0]} &mdash; ... &mdash; ${route[route.length - 1]}`
+    : route.join(' &mdash; ');
 
   return {
     price,
-    dateFrom,
-    dateTo,
+    dates,
     route
   };
 };
 
 const createTripInfoTemplate = (points) => {
-  const { price, dateFrom, dateTo, route } = getTripInfo(points);
+  const { price, dates, route } = getTripInfo(points);
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${route}</h1>
 
-      <p class="trip-info__dates">${getMonthDay(dateFrom)}&nbsp;&mdash;&nbsp;${getDay(dateTo)}</p>
+      <p class="trip-info__dates">${dates}</p>
     </div>
 
     <p class="trip-info__cost">
@@ -63,6 +75,6 @@ export default class TripInfoView extends AbstractView {
       return createTripInfoTemplate(this.#points);
     }
 
-    return ' ';
+    return '';
   }
 }

@@ -1,32 +1,6 @@
 import { getMonthDay, getDate, getTime, getDatetime, getTimeInterval } from '../utils/date-time.js';
+import { createOffersTemplate } from '../utils/point-tools.js';
 import AbstractView from './abstract-view.js';
-
-const createOffersTemplate = (offerArray) => {
-  const getOffersTemplate = (offers) => {
-    const offersToRender = offers.filter((offer) => offer.isActive);
-    if (offersToRender.length === 0) { return ''; }
-
-    const getListItemTemplate = (offer) => {
-      const { title, price } = offer;
-      return `<li class="event__offer">
-      <span class="event__offer-title">${title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${price}</span>
-    </li>`;
-    };
-
-    return offersToRender.map((offer) => getListItemTemplate(offer)).join('\n');
-  };
-
-  const offersTemplate = offerArray
-    .map((offerStruct) => getOffersTemplate(offerStruct.offers))
-    .join('\n');
-
-  return `<h4 class="visually-hidden">Offers:</h4>
-    <ul class="event__selected-offers">
-    ${offersTemplate}
-    </ul>`;
-};
 
 const createDestinationPointTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, isFavorite, offers, type } = point;
@@ -49,7 +23,7 @@ const createDestinationPointTemplate = (point) => {
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
       </p>
-      ${createOffersTemplate(offers)}
+      ${createOffersTemplate(offers, type)}
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

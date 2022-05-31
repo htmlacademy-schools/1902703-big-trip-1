@@ -1,4 +1,4 @@
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 import { getRandomInteger, getRandomElement } from '../utils/common.js';
 import { generateTime } from '../utils/date-time.js';
 
@@ -54,7 +54,7 @@ const generatePictures = () => {
   for (let i = 0; i < phCount; i++) {
     result.push({
       src: `http://picsum.photos/248/152?r=${Math.random()}`,
-      description: `Picture ${i}`
+      description: `Picture ${i}.`
     });
   }
 
@@ -67,37 +67,36 @@ const generateDestination = () => ({
   pictures: generatePictures()
 });
 
-const generateType = () => {
-  const types = [
-    'taxi',
-    'bus',
-    'train',
-    'ship',
-    'drive',
-    'flight',
-    'check-in',
-    'sightseeing',
-    'restaurant'
-  ];
-  return getRandomElement(types);
-};
+const types = [
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'drive',
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant'
+];
+
+const generateType = () => getRandomElement(types);
 
 const generateOffers = () => {
   const result = [];
-  const titles = [
-    'Add luggage',
-    'Order Uber',
-    'Switch to comfort',
-    'Rent a car',
-    'Add breakfast',
-    'Book tickets',
-    'Lunch in city'
-  ];
 
-  for (let i = 0; i < getRandomInteger(1, 2); i++) {
+  for (const type of types) {
     const offers = [];
+    const titles = [
+      'Add luggage',
+      'Order Uber',
+      'Switch to comfort',
+      'Rent a car',
+      'Add breakfast',
+      'Book tickets',
+      'Lunch in city'
+    ];
 
-    for (let j = 0; j < getRandomInteger(0, 3); j++) {
+    for (let j = 0; j < getRandomInteger(0, 5); j++) {
       const nextTitle = getRandomElement(titles);
       offers.push(
         {
@@ -110,7 +109,7 @@ const generateOffers = () => {
     }
 
     result.push({
-      type: generateType(),
+      type,
       offers
     });
   }

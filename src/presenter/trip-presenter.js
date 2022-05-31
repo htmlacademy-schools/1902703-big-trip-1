@@ -7,7 +7,7 @@ import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import PointPresenter from './point-presenter';
 import { updateItem } from '../utils/common.js';
-import { RenderPosition, render } from '../utils/render.js';
+import { RenderPosition, render, replace } from '../utils/render.js';
 import { sortPointsByDay, sortPointsByTime, sortPointsByPrice } from '../utils/point-tools.js';
 import { SortType } from '../const.js';
 
@@ -18,13 +18,14 @@ export default class TripPresenter {
   #tripEventsElement = null;
   #eventListElement = null;
 
+  #tripInfoComponent = null;
   #siteMenuComponent = new SiteMenuView();
   #filterConponent = new FilterView();
   #sortComponent = new SortView();
   #eventListComponent = new EventListView();
 
   #points = [];
-  #pointPresenter = new Map();
+  #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
 
   constructor() {
@@ -38,18 +39,23 @@ export default class TripPresenter {
     this.#points = [...points];
     this.#currentSortType = SortType.DAY;
     this.#sortPoints(this.#currentSortType);
+    this.#tripInfoComponent = new TripInfoView(this.#points);
 
-    render(this.#tripMainElement, new TripInfoView(this.#points), RenderPosition.AFTERBEGIN);
+    render(this.#tripMainElement, this.#tripInfoComponent, RenderPosition.AFTERBEGIN);
     this.#renderTrip();
   }
 
   #handleModeChange = () => {
-    this.#pointPresenter.forEach((presenter) => presenter.resetView());
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
   #handlePointChange = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+
+    const oldTripComponent = this.#tripInfoComponent;
+    this.#tripInfoComponent = new TripInfoView(this.#points);
+    replace(this.#tripInfoComponent, oldTripComponent);
   }
 
   #renderNavigation = () => {
@@ -102,7 +108,7 @@ export default class TripPresenter {
   #renderPoint = (point) => {
     const pointPresenter = new PointPresenter(this.#eventListElement, this.#handlePointChange, this.#handleModeChange);
     pointPresenter.init(point);
-    this.#pointPresenter.set(point.id, pointPresenter);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #renderPoints = () => {
@@ -117,8 +123,8 @@ export default class TripPresenter {
   }
 
   #clearPointList = () => {
-    this.#pointPresenter.forEach((presenter) => presenter.destroy());
-    this.#pointPresenter.clear();
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 
   #renderTrip = () => {
@@ -135,6 +141,7 @@ export default class TripPresenter {
     }
 
     this.#eventListElement = this.#tripEventsElement.querySelector('.trip-events__list');
+    // this.#renderFormCreate();
     this.#renderPoints();
   }
 }
