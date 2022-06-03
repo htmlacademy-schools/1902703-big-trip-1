@@ -1761,9 +1761,12 @@ class FormEditView extends _smart_view_js__WEBPACK_IMPORTED_MODULE_2__["default"
         this.updateData({
           dateFrom: userDate
         });
-        if (userDate > this._point.dateTo) this.updateData({
-          dateTo: userDate
-        });
+
+        if (userDate > this._point.dateTo) {
+          this.updateData({
+            dateTo: userDate
+          });
+        }
       }
     });
 
