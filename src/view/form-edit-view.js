@@ -164,6 +164,8 @@ export default class FormEditView extends SmartView {
     this.updateData(point);
   }
 
+  /* eslint-disable camelcase */
+
   setDatepicker = () => {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector(`#event-start-time-${this._point.id}`),
@@ -188,15 +190,18 @@ export default class FormEditView extends SmartView {
     );
   }
 
+  /* eslint-enable camelcase */
+
   #dateFromChangeHandler = ([userDate]) => {
     this.updateData({
       dateFrom: userDate,
     });
 
-    if(userDate > this._point.dateTo)
-    this.updateData({
-      dateTo: userDate,
-    });
+    if (userDate > this._point.dateTo) {
+      this.updateData({
+        dateTo: userDate,
+      });
+    }
   }
 
   #dateToChangeHandler = ([userDate]) => {
