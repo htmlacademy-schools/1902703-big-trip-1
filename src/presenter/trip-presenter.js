@@ -51,11 +51,13 @@ export default class TripPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
 
     const oldTripComponent = this.#tripInfoComponent;
     this.#tripInfoComponent = new TripInfoView(this.#points);
     replace(this.#tripInfoComponent, oldTripComponent);
+
+    this.#sortPoints(this.#currentSortType);
+    this.#reRenderTrip();
   }
 
   #renderNavigation = () => {
@@ -88,8 +90,7 @@ export default class TripPresenter {
     }
 
     this.#sortPoints(sortType);
-    this.#clearPointList();
-    this.#renderPoints();
+    this.#reRenderTrip();
   }
 
   #renderSort = () => {
@@ -142,6 +143,11 @@ export default class TripPresenter {
 
     this.#eventListElement = this.#tripEventsElement.querySelector('.trip-events__list');
     // this.#renderFormCreate();
+    this.#renderPoints();
+  }
+
+  #reRenderTrip = () => {
+    this.#clearPointList();
     this.#renderPoints();
   }
 }

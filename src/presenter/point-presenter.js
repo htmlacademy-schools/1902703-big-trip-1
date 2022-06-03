@@ -40,6 +40,7 @@ export default class PointPresenter {
       this.#formEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
       this.#formEditComponent.setFormCloseHandler(this.#handleFormClose);
       this.#formEditComponent.setInnerHandlers();
+      this.#formEditComponent.setDatepicker();
     };
     this.#formEditComponent.restoreHandlers();
 

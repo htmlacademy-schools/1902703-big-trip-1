@@ -1,6 +1,9 @@
 import { createFormOffersTemplate, createFormDescription } from '../utils/point-tools.js';
 import { getFormDate } from '../utils/date-time.js';
 import SmartView from './smart-view.js';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createFormEditTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, id, offers, type } = point;
@@ -113,6 +116,9 @@ const createFormEditTemplate = (point) => {
 };
 
 export default class FormEditView extends SmartView {
+  #datepickerFrom = null;
+  #datepickerTo = null;
+
   constructor(point) {
     super();
     this._point = point;
@@ -120,6 +126,83 @@ export default class FormEditView extends SmartView {
 
   get template() {
     return createFormEditTemplate(this._point);
+  }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  }
+
+  setFormCloseHandler = (callback) => {
+    this._callback.closeClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
+  }
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  setInnerHandlers = () => {
+    this.element.querySelector('.event__type-list').addEventListener('input', this.#changeTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeCityHandler);
+
+    const offers = this.element.querySelector('.event__available-offers');
+    if (offers) { offers.addEventListener('input', this.#changeOptionsHandler); }
+  }
+
+  reset = (point) => {
+    this.updateData(point);
+  }
+
+  setDatepicker = () => {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector(`#event-start-time-${this._point.id}`),
+      {
+        enableTime: true,
+        time_24hr: true,
+        dateFormat: 'j/m/y H:i',
+        defaultDate: this._point.dateFrom,
+        onChange: this.#dateFromChangeHandler
+      },
+    );
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector(`#event-end-time-${this._point.id}`),
+      {
+        enableTime: true,
+        time_24hr: true,
+        dateFormat: 'j/m/y H:i',
+        minDate: this._point.dateFrom,
+        defaultDate: this._point.dateTo,
+        onChange: this.#dateToChangeHandler
+      },
+    );
+  }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateFrom: userDate,
+    });
+
+    if(userDate > this._point.dateTo)
+    this.updateData({
+      dateTo: userDate,
+    });
+  }
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateTo: userDate,
+    });
   }
 
   #formCloseHandler = (evt) => {
@@ -172,27 +255,5 @@ export default class FormEditView extends SmartView {
     }
 
     this.updateData({ offers });
-  }
-
-  setFormCloseHandler = (callback) => {
-    this._callback.closeClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
-  }
-
-  setFormSubmitHandler = (callback) => {
-    this._callback.formSubmit = callback;
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-  }
-
-  setInnerHandlers = () => {
-    this.element.querySelector('.event__type-list').addEventListener('input', this.#changeTypeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeCityHandler);
-
-    const offers = this.element.querySelector('.event__available-offers');
-    if (offers) { offers.addEventListener('input', this.#changeOptionsHandler); }
-  }
-
-  reset = (point) => {
-    this.updateData(point);
   }
 }
