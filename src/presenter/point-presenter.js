@@ -1,6 +1,8 @@
 import FormEditView from '../view/form-edit-view.js';
 import PointView from '../view/point-view.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
+import { UserAction, UpdateType } from '../const.js';
+import { isDatesEqual } from '../utils/point-tools.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -36,13 +38,9 @@ export default class PointPresenter {
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
-    this.#formEditComponent.restoreHandlers = () => {
-      this.#formEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
-      this.#formEditComponent.setFormCloseHandler(this.#handleFormClose);
-      this.#formEditComponent.setInnerHandlers();
-      this.#formEditComponent.setDatepicker();
-    };
-    this.#formEditComponent.restoreHandlers();
+    this.#formEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#formEditComponent.setFormCloseHandler(this.#handleFormClose);
+    this.#formEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevPointComponent === null || prevFormEditComponent === null) {
       render(this.#pointListContainer, this.#pointComponent, RenderPosition.BEFOREEND);
@@ -88,8 +86,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#formEditComponent.reset(this.#point);
-      this.#replaceFormToPoint();
+      this.#handleFormClose();
     }
   }
 
@@ -98,16 +95,33 @@ export default class PointPresenter {
   }
 
   #handleFavoriteClick = () => {
-    this.#changeData({ ...this.#point, isFavorite: !this.#point.isFavorite });
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      { ...this.#point, isFavorite: !this.#point.isFavorite },
+    );
   }
 
-  #handleFormSubmit = (point) => {
-    this.#changeData(point);
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate = !isDatesEqual(this.#point, update);
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update);
     this.#replaceFormToPoint();
   }
 
   #handleFormClose = () => {
     this.#formEditComponent.reset(this.#point);
     this.#replaceFormToPoint();
+  }
+
+  #handleDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
+      point,
+    );
   }
 }

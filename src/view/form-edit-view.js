@@ -122,6 +122,9 @@ export default class FormEditView extends SmartView {
   constructor(point) {
     super();
     this._point = point;
+
+    this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
@@ -142,17 +145,34 @@ export default class FormEditView extends SmartView {
     }
   }
 
-  setFormCloseHandler = (callback) => {
-    this._callback.closeClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
-  }
-
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  setInnerHandlers = () => {
+  setFormCloseHandler = (callback) => {
+    this._callback.closeClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
+  }
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  }
+
+  reset = (point) => {
+    this.updateData(point);
+  }
+
+  restoreHandlers = () => {
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormCloseHandler(this._callback.closeClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+    this.#setInnerHandlers();
+    this.#setDatepicker();
+  }
+
+  #setInnerHandlers = () => {
     this.element.querySelector('.event__type-list').addEventListener('input', this.#changeTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeCityHandler);
 
@@ -160,13 +180,9 @@ export default class FormEditView extends SmartView {
     if (offers) { offers.addEventListener('input', this.#changeOptionsHandler); }
   }
 
-  reset = (point) => {
-    this.updateData(point);
-  }
-
   /* eslint-disable camelcase */
 
-  setDatepicker = () => {
+  #setDatepicker = () => {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector(`#event-start-time-${this._point.id}`),
       {
@@ -210,14 +226,19 @@ export default class FormEditView extends SmartView {
     });
   }
 
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit(this._point);
+  }
+
   #formCloseHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeClick();
   }
 
-  #formSubmitHandler = (evt) => {
+  #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this._point);
+    this._callback.deleteClick(this._point);
   }
 
   #changeTypeHandler = (evt) => {
