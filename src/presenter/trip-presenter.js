@@ -1,11 +1,11 @@
 import EmptyListView from '../view/empty-list-view.js';
 import EventListView from '../view/event-list-view.js';
-import FilterView from '../view/filter-view.js';
 import FormCreateView from '../view/form-create-view.js';
 import NavigationView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import PointPresenter from './point-presenter';
+import FilterPresenter from './filter-presenter';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { filter } from '../utils/filter.js';
 import { sortPointsByDay, sortPointsByTime, sortPointsByPrice } from '../utils/point-tools.js';
@@ -20,19 +20,21 @@ export default class TripPresenter {
 
   #tripInfoComponent = null;
   #navigationComponent = new NavigationView();
-  #filterComponent = null;
   #sortComponent = null;
   #eventListComponent = new EventListView();
   #emptyListComponent = null;
 
   #pointsModel = null;
+  #filterModel = null;
   #pointPresenters = new Map();
+  #filterPresenter = null;
   #currentSortType = SortType.DAY;
-  #currentFilterType = FilterType.EVERYTHING;
 
-  constructor(pointsModel) {
+  constructor(pointsModel, filterModel) {
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
 
     this.#tripMainContainer = document.querySelector('.trip-main');
     this.#navigationContainer = this.#tripMainContainer.querySelector('.trip-controls__navigation');
@@ -41,7 +43,7 @@ export default class TripPresenter {
   }
 
   get points() {
-    const result = filter[this.#currentFilterType]([...this.#pointsModel.points]);
+    const result = filter[this.#filterModel.filter]([...this.#pointsModel.points]);
 
     switch (this.#currentSortType) {
       case SortType.DAY:
@@ -87,22 +89,12 @@ export default class TripPresenter {
         this.#reRenderPoints();
         break;
       case UpdateType.MAJOR:
+        this.#currentSortType = SortType.DAY;
         this.#reRenderTrip();
         break;
     }
 
     this.#renderTripInfo();
-  }
-
-  #handleFilterTypeChange = (filterType) => {
-    if (this.#currentFilterType === filterType) {
-      return;
-    }
-
-    this.#currentFilterType = filterType;
-    this.#currentSortType = SortType.DAY;
-    this.#renderSort();
-    this.#reRenderPoints();
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -132,20 +124,6 @@ export default class TripPresenter {
 
   #renderNavigation = () => {
     render(this.#navigationContainer, this.#navigationComponent, RenderPosition.BEFOREEND);
-  }
-
-  #renderFilters = () => {
-    const oldFilterComponent = this.#filterComponent;
-    this.#filterComponent = new FilterView(this.#currentFilterType);
-
-    if (oldFilterComponent) {
-      replace(this.#filterComponent, oldFilterComponent);
-    }
-    else {
-      render(this.#filterContainer, this.#filterComponent, RenderPosition.BEFOREEND);
-    }
-
-    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
   }
 
   #renderSort = () => {
@@ -208,7 +186,7 @@ export default class TripPresenter {
         remove(this.#eventListComponent);
       }
 
-      this.#renderEmpty(this.#currentFilterType);
+      this.#renderEmpty(this.#filterModel.filter);
       return;
     }
 
@@ -230,35 +208,28 @@ export default class TripPresenter {
   #renderTrip = () => {
     this.#renderTripInfo();
     this.#renderNavigation();
-    this.#renderFilters();
+
+    this.#filterPresenter = new FilterPresenter(this.#filterContainer, this.#filterModel, this.#pointsModel);
+    this.#filterPresenter.init();
+
     this.#renderSort();
     this.#renderEventList();
     // this.#renderFormCreate();
     this.#renderPointList();
   }
 
-  #clearTrip = (resetSortType = false, resetFilterType = false) => {
+  #clearTrip = () => {
     this.#clearPointList();
+    this.#filterPresenter.destroy();
 
     remove(this.#tripInfoComponent);
     this.#tripInfoComponent = null;
-
-    remove(this.#filterComponent);
-    this.#filterComponent = null;
 
     remove(this.#sortComponent);
     this.#sortComponent = null;
 
     remove(this.#navigationComponent);
     remove(this.#eventListComponent);
-
-    if (resetSortType) {
-      this.#currentSortType = SortType.DAY;
-    }
-
-    if (resetFilterType) {
-      this.#currentFilterType = FilterType.EVERYTHING;
-    }
   }
 
   #reRenderPoints = () => {
