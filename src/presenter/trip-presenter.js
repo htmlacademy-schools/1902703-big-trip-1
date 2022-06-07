@@ -7,47 +7,52 @@ import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import PointPresenter from './point-presenter';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
+import { filter } from '../utils/filter.js';
 import { sortPointsByDay, sortPointsByTime, sortPointsByPrice } from '../utils/point-tools.js';
-import { SortType, UpdateType, UserAction } from '../const.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 
 export default class TripPresenter {
-  #tripMainElement = null;
-  #navigationElement = null;
-  #filterElement = null;
-  #tripEventsElement = null;
+  #tripMainContainer = null;
+  #navigationContainer = null;
+  #filterContainer = null;
+  #tripEventsContainer = null;
   #eventListElement = null;
 
   #tripInfoComponent = null;
   #navigationComponent = new NavigationView();
-  #filterConponent = new FilterView();
+  #filterComponent = null;
   #sortComponent = null;
   #eventListComponent = new EventListView();
+  #emptyListComponent = null;
 
   #pointsModel = null;
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #currentFilterType = FilterType.EVERYTHING;
 
   constructor(pointsModel) {
     this.#pointsModel = pointsModel;
     this.#pointsModel.addObserver(this.#handleModelEvent);
 
-    this.#tripMainElement = document.querySelector('.trip-main');
-    this.#navigationElement = this.#tripMainElement.querySelector('.trip-controls__navigation');
-    this.#filterElement = this.#tripMainElement.querySelector('.trip-controls__filters');
-    this.#tripEventsElement = document.querySelector('.trip-events');
+    this.#tripMainContainer = document.querySelector('.trip-main');
+    this.#navigationContainer = this.#tripMainContainer.querySelector('.trip-controls__navigation');
+    this.#filterContainer = this.#tripMainContainer.querySelector('.trip-controls__filters');
+    this.#tripEventsContainer = document.querySelector('.trip-events');
   }
 
   get points() {
+    const result = filter[this.#currentFilterType]([...this.#pointsModel.points]);
+
     switch (this.#currentSortType) {
       case SortType.DAY:
-        return [...this.#pointsModel.points].sort(sortPointsByDay);
+        return result.sort(sortPointsByDay);
       case SortType.TIME:
-        return [...this.#pointsModel.points].sort(sortPointsByTime);
+        return result.sort(sortPointsByTime);
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortPointsByPrice);
+        return result.sort(sortPointsByPrice);
     }
 
-    return this.#pointsModel.points;
+    return result;
   }
 
   init = () => {
@@ -89,6 +94,17 @@ export default class TripPresenter {
     this.#renderTripInfo();
   }
 
+  #handleFilterTypeChange = (filterType) => {
+    if (this.#currentFilterType === filterType) {
+      return;
+    }
+
+    this.#currentFilterType = filterType;
+    this.#currentSortType = SortType.DAY;
+    this.#renderSort();
+    this.#reRenderPoints();
+  }
+
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
@@ -100,26 +116,36 @@ export default class TripPresenter {
 
   #renderTripInfo = () => {
     const oldTripComponent = this.#tripInfoComponent;
-    this.#tripInfoComponent = new TripInfoView([...this.points]);
+    this.#tripInfoComponent = new TripInfoView([...this.#pointsModel.points]);
 
     if (oldTripComponent) {
       replace(this.#tripInfoComponent, oldTripComponent);
     }
     else {
-      render(this.#tripMainElement, this.#tripInfoComponent, RenderPosition.AFTERBEGIN);
+      render(this.#tripMainContainer, this.#tripInfoComponent, RenderPosition.AFTERBEGIN);
     }
 
-    if (this.points.length === 0) {
+    if (this.#pointsModel.points.length === 0) {
       remove(this.#tripInfoComponent);
     }
   }
 
   #renderNavigation = () => {
-    render(this.#navigationElement, this.#navigationComponent, RenderPosition.BEFOREEND);
+    render(this.#navigationContainer, this.#navigationComponent, RenderPosition.BEFOREEND);
   }
 
   #renderFilters = () => {
-    render(this.#filterElement, this.#filterConponent, RenderPosition.BEFOREEND);
+    const oldFilterComponent = this.#filterComponent;
+    this.#filterComponent = new FilterView(this.#currentFilterType);
+
+    if (oldFilterComponent) {
+      replace(this.#filterComponent, oldFilterComponent);
+    }
+    else {
+      render(this.#filterContainer, this.#filterComponent, RenderPosition.BEFOREEND);
+    }
+
+    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
   }
 
   #renderSort = () => {
@@ -130,14 +156,39 @@ export default class TripPresenter {
       replace(this.#sortComponent, oldSortComponent);
     }
     else {
-      render(this.#tripEventsElement, this.#sortComponent, RenderPosition.BEFOREEND);
+      render(this.#tripEventsContainer, this.#sortComponent, RenderPosition.BEFOREEND);
     }
 
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderEventList = () => {
-    render(this.#tripEventsElement, this.#eventListComponent, RenderPosition.BEFOREEND);
+    render(this.#tripEventsContainer, this.#eventListComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderEmpty = (filterType) => {
+    let message = 'Click New Event to create your first point';
+
+    if (this.#pointsModel.points?.length !== 0) {
+      switch (filterType) {
+        case FilterType.FUTURE:
+          message = 'There are no future events now';
+          break;
+        case FilterType.PAST:
+          message = 'There are no past events now';
+          break;
+      }
+    }
+
+    const oldEmptyListComponent = this.#emptyListComponent;
+    this.#emptyListComponent = new EmptyListView(message);
+
+    if (oldEmptyListComponent) {
+      replace(this.#emptyListComponent, oldEmptyListComponent);
+    }
+    else {
+      render(this.#tripEventsContainer, this.#emptyListComponent, RenderPosition.BEFOREEND);
+    }
   }
 
   #renderFormCreate = () => {
@@ -151,56 +202,62 @@ export default class TripPresenter {
   }
 
   #renderPointList = () => {
+    if (this.points?.length === 0) {
+      if (this.#pointsModel.points?.length === 0) {
+        remove(this.#sortComponent);
+        remove(this.#eventListComponent);
+      }
+
+      this.#renderEmpty(this.#currentFilterType);
+      return;
+    }
+
+    this.#eventListElement = this.#tripEventsContainer.querySelector('.trip-events__list');
+
     for (let i = 0; i < this.points.length; i++) {
       this.#renderPoint(this.points[i]);
     }
   }
 
   #clearPointList = () => {
+    remove(this.#emptyListComponent);
+    this.#emptyListComponent = null;
+
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
-  }
-
-  #renderEmpty = () => {
-    const message = 'Click New Event to create your first point';
-    render(this.#tripEventsElement, new EmptyListView(message), RenderPosition.BEFOREEND);
   }
 
   #renderTrip = () => {
     this.#renderTripInfo();
     this.#renderNavigation();
     this.#renderFilters();
-
-    if (this.points?.length > 0) {
-      this.#renderSort();
-      this.#renderEventList();
-    }
-    else {
-      this.#renderEmpty();
-      return;
-    }
-
-    this.#eventListElement = this.#tripEventsElement.querySelector('.trip-events__list');
+    this.#renderSort();
+    this.#renderEventList();
     // this.#renderFormCreate();
     this.#renderPointList();
   }
 
-  #clearTrip = (resetSortType = false) => {
-    // доработать
+  #clearTrip = (resetSortType = false, resetFilterType = false) => {
     this.#clearPointList();
 
     remove(this.#tripInfoComponent);
     this.#tripInfoComponent = null;
 
+    remove(this.#filterComponent);
+    this.#filterComponent = null;
+
     remove(this.#sortComponent);
     this.#sortComponent = null;
 
     remove(this.#navigationComponent);
-    remove(this.#filterConponent);
     remove(this.#eventListComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
+    }
+
+    if (resetFilterType) {
+      this.#currentFilterType = FilterType.EVERYTHING;
     }
   }
 
