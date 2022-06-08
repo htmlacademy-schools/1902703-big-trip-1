@@ -103,13 +103,39 @@ export const createFormDescription = (description, pictures) => {
   </section>`;
 };
 
+export const createCityDataList = (id) => {
+  let result = [];
+  const cities = [
+    'Geneva',
+    'Amsterdam',
+    'Chamonix',
+    'Moscow',
+    'Yekaterinburg',
+    'Saint Petersburg',
+    'Novosibirsk',
+    'Kazan',
+    'Nizhny Novgorod',
+    'Chelyabinsk',
+    'Samara',
+    'Omsk'
+  ];
+
+  for (let item of cities) {
+    result.push(`<option value="${item}"></option>`)
+  }
+
+  return `<datalist id="destination-list-${id}">
+    ${result.join('\n')}
+  </datalist>`
+}
+
 export const isDatesEqual = (p1, p2) =>
   p1.dateFrom === p2.dateFrom && p1.dateTo === p2.dateTo;
 
 export const getNewPoint = () => ({
   basePrice: 0,
-  dateFrom: Date.now(),
-  dateTo: Date.now(),
+  dateFrom: new Date(Date.now()),
+  dateTo: new Date(Date.now()),
   destination: null,
   id: nanoid(),
   isFavorite: false,

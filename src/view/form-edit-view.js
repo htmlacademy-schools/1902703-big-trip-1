@@ -1,8 +1,9 @@
-import { createFormOffersTemplate, createFormDescription } from '../utils/point-tools.js';
+import { createFormOffersTemplate, createFormDescription, createCityDataList } from '../utils/point-tools.js';
 import { getFormDate } from '../utils/date-time.js';
 import { generatePictures, generateDescription } from '../mock/destinationPoint';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -75,12 +76,8 @@ const createFormEditTemplate = (point) => {
           <label class="event__label  event__type-output" for="event-destination-${id}">
           ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
-          <datalist id="destination-list-${id}">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
-          </datalist>
+          <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${he.encode(destination?.name ? destination.name : '')}" list="destination-list-${id}">
+          ${createCityDataList(id)}
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -231,6 +228,28 @@ export default class FormEditView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+
+    const cities = [
+      'Geneva',
+      'Amsterdam',
+      'Chamonix',
+      'Moscow',
+      'Yekaterinburg',
+      'Saint Petersburg',
+      'Novosibirsk',
+      'Kazan',
+      'Nizhny Novgorod',
+      'Chelyabinsk',
+      'Samara',
+      'Omsk'
+    ];
+
+    if (this._point.destination === null
+      || this._point.type === null
+      || !cities.includes(this._point.destination.name)) {
+      return;
+    }
+
     this._callback.formSubmit(this._point);
   }
 
@@ -281,7 +300,7 @@ export default class FormEditView extends SmartView {
     evt.preventDefault();
     const splited = evt.target.id.split('-');
     const index = +splited[splited.length - 1] - 1;
-    const offers = JSON.parse(JSON.stringify(this._point.offers));
+    const offers = [...this._point.offers];
 
     for (const offerStruct of offers) {
       if (offerStruct.type !== this._point.type) { continue; }

@@ -1,5 +1,5 @@
 import EmptyListView from '../view/empty-list-view.js';
-import EventListView from '../view/event-list-view.js';
+import PointListView from '../view/event-list-view.js';
 import NavigationView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
@@ -21,7 +21,7 @@ export default class TripPresenter {
   #tripInfoComponent = null;
   #navigationComponent = new NavigationView();
   #sortComponent = null;
-  #eventListComponent = new EventListView();
+  #pointListComponent = new PointListView();
   #emptyListComponent = null;
 
   #pointsModel = null;
@@ -66,7 +66,18 @@ export default class TripPresenter {
   createPoint = () => {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#pointNewPresenter = new PointNewPresenter(this.#pointListContainer, this.#handleViewAction);
+
+    const firstPoint = this.#pointListContainer === null;
+
+    if (firstPoint) {
+      remove(this.#emptyListComponent);
+      this.#emptyListComponent = null;
+
+      this.#renderPointList();
+      this.#pointListContainer = this.#tripEventsContainer.querySelector('.trip-events__list');
+    }
+
+    this.#pointNewPresenter = new PointNewPresenter(this.#pointListContainer, this.#handleViewAction, firstPoint);
     this.#pointNewPresenter.init();
   }
 
@@ -85,6 +96,9 @@ export default class TripPresenter {
         break;
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
+        break;
+        case UserAction.UPDATE_VIEW:
+        this.#pointsModel.updateView(updateType);
         break;
     }
   }
@@ -150,7 +164,7 @@ export default class TripPresenter {
   }
 
   #renderPointList = () => {
-    render(this.#tripEventsContainer, this.#eventListComponent, RenderPosition.BEFOREEND);
+    render(this.#tripEventsContainer, this.#pointListComponent, RenderPosition.BEFOREEND);
   }
 
   #renderEmpty = (filterType) => {
@@ -188,7 +202,8 @@ export default class TripPresenter {
     if (this.points?.length === 0) {
       if (this.#pointsModel.points?.length === 0) {
         remove(this.#sortComponent);
-        remove(this.#eventListComponent);
+        remove(this.#pointListComponent);
+        this.#pointListContainer = null;
       }
 
       this.#renderEmpty(this.#filterModel.filter);
@@ -236,7 +251,8 @@ export default class TripPresenter {
     this.#sortComponent = null;
 
     remove(this.#navigationComponent);
-    remove(this.#eventListComponent);
+    remove(this.#pointListComponent);
+    this.#pointListContainer = null;
   }
 
   #reRenderPoints = () => {

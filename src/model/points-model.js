@@ -50,4 +50,8 @@ export default class PointsModel extends AbstractObservable {
 
     this._notify(updateType);
   }
+
+  updateView = (updateType) => {
+    this._notify(updateType);
+  }
 }

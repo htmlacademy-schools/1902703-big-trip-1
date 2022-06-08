@@ -4,7 +4,7 @@ import TripPresenter from './presenter/trip-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model';
 
-const POINT_COUNT = 10;
+const POINT_COUNT = 5;
 const points = Array.from({ length: POINT_COUNT }, () => convertPoint(generatePoint()));
 
 const pointsModel = new PointsModel();
@@ -16,6 +16,6 @@ const tripPresenter = new TripPresenter(pointsModel, filterModel);
 tripPresenter.init();
 
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-  evt.preventDefault();
-  tripPresenter.createPoint();
+	evt.preventDefault();
+	tripPresenter.createPoint();
 });

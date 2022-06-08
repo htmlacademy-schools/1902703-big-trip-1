@@ -3,14 +3,15 @@ import { remove, render, RenderPosition } from '../utils/render.js';
 import { UserAction, UpdateType } from '../const.js';
 
 export default class PointNewPresenter {
-  isActive = false;
+  #isFirstPoint = false;
   #pointListContainer = null;
   #changeData = null;
   #formCreateComponent = null;
 
-  constructor(pointListContainer, changeData) {
+  constructor(pointListContainer, changeData, isFirstPoint) {
     this.#pointListContainer = pointListContainer;
     this.#changeData = changeData;
+    this.#isFirstPoint = isFirstPoint;
   }
 
   init = () => {
@@ -23,7 +24,6 @@ export default class PointNewPresenter {
     this.#formCreateComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     render(this.#pointListContainer, this.#formCreateComponent, RenderPosition.AFTERBEGIN);
-    this.isActive = true;
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
     document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
@@ -36,7 +36,6 @@ export default class PointNewPresenter {
 
     remove(this.#formCreateComponent);
     this.#formCreateComponent = null;
-    this.isActive = false;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
@@ -45,13 +44,22 @@ export default class PointNewPresenter {
   #handleFormSubmit = (point) => {
     this.#changeData(
       UserAction.ADD_POINT,
-      UpdateType.MINOR,
+      this.#isFirstPoint
+        ? UpdateType.MAJOR
+        : UpdateType.MINOR,
       point,
     );
     this.destroy();
   }
 
   #handleDeleteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_VIEW,
+      this.#isFirstPoint
+        ? UpdateType.MAJOR
+        : null,
+      null,
+    );
     this.destroy();
   }
 
