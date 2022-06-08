@@ -1,3 +1,6 @@
+import { getNewOffers } from '../mock/destinationPoint';
+import { nanoid } from 'nanoid';
+
 export const sortPointsByDay = (p1, p2) => p1.dateFrom - p2.dateFrom;
 
 export const sortPointsByTime = (p1, p2) =>
@@ -102,3 +105,14 @@ export const createFormDescription = (description, pictures) => {
 
 export const isDatesEqual = (p1, p2) =>
   p1.dateFrom === p2.dateFrom && p1.dateTo === p2.dateTo;
+
+export const getNewPoint = () => ({
+  basePrice: 0,
+  dateFrom: Date.now(),
+  dateTo: Date.now(),
+  destination: null,
+  id: nanoid(),
+  isFavorite: false,
+  offers: getNewOffers(),
+  type: 'taxi',
+});

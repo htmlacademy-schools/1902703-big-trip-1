@@ -1,11 +1,11 @@
 import EmptyListView from '../view/empty-list-view.js';
 import EventListView from '../view/event-list-view.js';
-import FormCreateView from '../view/form-create-view.js';
 import NavigationView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import PointPresenter from './point-presenter';
 import FilterPresenter from './filter-presenter';
+import PointNewPresenter from './point-new-presenter';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { filter } from '../utils/filter.js';
 import { sortPointsByDay, sortPointsByTime, sortPointsByPrice } from '../utils/point-tools.js';
@@ -16,7 +16,7 @@ export default class TripPresenter {
   #navigationContainer = null;
   #filterContainer = null;
   #tripEventsContainer = null;
-  #eventListElement = null;
+  #pointListContainer = null;
 
   #tripInfoComponent = null;
   #navigationComponent = new NavigationView();
@@ -27,6 +27,7 @@ export default class TripPresenter {
   #pointsModel = null;
   #filterModel = null;
   #pointPresenters = new Map();
+  #pointNewPresenter = null;
   #filterPresenter = null;
   #currentSortType = SortType.DAY;
 
@@ -62,7 +63,15 @@ export default class TripPresenter {
     this.#renderTrip();
   }
 
+  createPoint = () => {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#pointNewPresenter = new PointNewPresenter(this.#pointListContainer, this.#handleViewAction);
+    this.#pointNewPresenter.init();
+  }
+
   #handleModeChange = () => {
+    this.#pointNewPresenter?.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
@@ -140,7 +149,7 @@ export default class TripPresenter {
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
-  #renderEventList = () => {
+  #renderPointList = () => {
     render(this.#tripEventsContainer, this.#eventListComponent, RenderPosition.BEFOREEND);
   }
 
@@ -169,17 +178,13 @@ export default class TripPresenter {
     }
   }
 
-  #renderFormCreate = () => {
-    render(this.#eventListElement, new FormCreateView(this.points[0]), RenderPosition.AFTERBEGIN);
-  }
-
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#eventListElement, this.#handleViewAction, this.#handleModeChange);
+    const pointPresenter = new PointPresenter(this.#pointListContainer, this.#handleViewAction, this.#handleModeChange);
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #renderPointList = () => {
+  #renderPoints = () => {
     if (this.points?.length === 0) {
       if (this.#pointsModel.points?.length === 0) {
         remove(this.#sortComponent);
@@ -190,16 +195,16 @@ export default class TripPresenter {
       return;
     }
 
-    this.#eventListElement = this.#tripEventsContainer.querySelector('.trip-events__list');
-
     for (let i = 0; i < this.points.length; i++) {
       this.#renderPoint(this.points[i]);
     }
   }
 
   #clearPointList = () => {
-    remove(this.#emptyListComponent);
-    this.#emptyListComponent = null;
+    if (this.#emptyListComponent) {
+      remove(this.#emptyListComponent);
+      this.#emptyListComponent = null;
+    }
 
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
@@ -213,12 +218,14 @@ export default class TripPresenter {
     this.#filterPresenter.init();
 
     this.#renderSort();
-    this.#renderEventList();
-    // this.#renderFormCreate();
     this.#renderPointList();
+    this.#pointListContainer = this.#tripEventsContainer.querySelector('.trip-events__list');
+
+    this.#renderPoints();
   }
 
   #clearTrip = () => {
+    this.#pointNewPresenter?.destroy();
     this.#clearPointList();
     this.#filterPresenter.destroy();
 
@@ -234,7 +241,7 @@ export default class TripPresenter {
 
   #reRenderPoints = () => {
     this.#clearPointList();
-    this.#renderPointList();
+    this.#renderPoints();
   }
 
   #reRenderTrip = () => {

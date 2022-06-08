@@ -1,5 +1,6 @@
 import { createFormOffersTemplate, createFormDescription } from '../utils/point-tools.js';
 import { getFormDate } from '../utils/date-time.js';
+import { generatePictures, generateDescription } from '../mock/destinationPoint';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 
@@ -14,7 +15,7 @@ const createFormEditTemplate = (point) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
 
@@ -177,7 +178,9 @@ export default class FormEditView extends SmartView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeCityHandler);
 
     const offers = this.element.querySelector('.event__available-offers');
-    if (offers) { offers.addEventListener('input', this.#changeOptionsHandler); }
+    if (offers) {
+      offers.addEventListener('input', this.#changeOptionsHandler);
+    }
   }
 
   /* eslint-disable camelcase */
@@ -245,10 +248,12 @@ export default class FormEditView extends SmartView {
     evt.preventDefault();
 
     const type = evt.target.value;
-    const offers = JSON.parse(JSON.stringify(this._point.offers));
+    const offers = [...this._point.offers];
 
     for (const offerStruct of offers) {
-      if (offerStruct.type !== type) { continue; }
+      if (offerStruct.type !== type) {
+        continue;
+      }
 
       offerStruct.offers.forEach((offer) => {
         offer.isActive = false;
@@ -262,8 +267,14 @@ export default class FormEditView extends SmartView {
 
   #changeCityHandler = (evt) => {
     evt.preventDefault();
-    this.updateData({ destination: { ...this._point.destination, ...{ name: evt.target.value } } });
-    // обновить описание и фотографии
+    this.updateData({
+      destination:
+      {
+        name: evt.target.value,
+        description: generateDescription(),
+        pictures: generatePictures()
+      }
+    });
   }
 
   #changeOptionsHandler = (evt) => {
