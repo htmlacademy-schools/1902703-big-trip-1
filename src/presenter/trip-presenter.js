@@ -97,7 +97,7 @@ export default class TripPresenter {
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
         break;
-        case UserAction.UPDATE_VIEW:
+      case UserAction.UPDATE_VIEW:
         this.#pointsModel.updateView(updateType);
         break;
     }

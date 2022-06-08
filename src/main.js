@@ -16,6 +16,6 @@ const tripPresenter = new TripPresenter(pointsModel, filterModel);
 tripPresenter.init();
 
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-	evt.preventDefault();
-	tripPresenter.createPoint();
+  evt.preventDefault();
+  tripPresenter.createPoint();
 });

@@ -173,6 +173,7 @@ export default class FormEditView extends SmartView {
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-list').addEventListener('input', this.#changeTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeCityHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#changePriceHandler);
 
     const offers = this.element.querySelector('.event__available-offers');
     if (offers) {
@@ -246,7 +247,9 @@ export default class FormEditView extends SmartView {
 
     if (this._point.destination === null
       || this._point.type === null
-      || !cities.includes(this._point.destination.name)) {
+      || !cities.includes(this._point.destination.name)
+      || isNaN(this._point.basePrice)
+      || this._point.basePrice < 0) {
       return;
     }
 
@@ -294,6 +297,11 @@ export default class FormEditView extends SmartView {
         pictures: generatePictures()
       }
     });
+  }
+
+  #changePriceHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({ basePrice: +evt.target.value });
   }
 
   #changeOptionsHandler = (evt) => {

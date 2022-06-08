@@ -104,7 +104,7 @@ export const createFormDescription = (description, pictures) => {
 };
 
 export const createCityDataList = (id) => {
-  let result = [];
+  const result = [];
   const cities = [
     'Geneva',
     'Amsterdam',
@@ -120,14 +120,14 @@ export const createCityDataList = (id) => {
     'Omsk'
   ];
 
-  for (let item of cities) {
-    result.push(`<option value="${item}"></option>`)
+  for (const item of cities) {
+    result.push(`<option value="${item}"></option>`);
   }
 
   return `<datalist id="destination-list-${id}">
     ${result.join('\n')}
-  </datalist>`
-}
+  </datalist>`;
+};
 
 export const isDatesEqual = (p1, p2) =>
   p1.dateFrom === p2.dateFrom && p1.dateTo === p2.dateTo;
