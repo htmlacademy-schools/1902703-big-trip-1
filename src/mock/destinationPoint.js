@@ -4,7 +4,7 @@ import { generateTime } from '../utils/date-time.js';
 
 const generatePrice = () => getRandomInteger(2, 60) * 10;
 
-const generateDescription = () => {
+export const generateDescription = () => {
   const sentences = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -19,7 +19,7 @@ const generateDescription = () => {
     'In rutrum ac purus sit amet tempus.'
   ];
 
-  const sentCount = getRandomInteger(1, 5);
+  const sentCount = getRandomInteger(0, 5);
   let result = '';
   for (let i = 0; i < sentCount; i++) {
     const sent = getRandomElement(sentences);
@@ -48,7 +48,7 @@ const generateCity = () => {
   return getRandomElement(cities);
 };
 
-const generatePictures = () => {
+export const generatePictures = () => {
   const phCount = getRandomInteger(1, 10);
   const result = [];
   for (let i = 0; i < phCount; i++) {
@@ -104,6 +104,42 @@ const generateOffers = () => {
           title: nextTitle,
           price: getRandomInteger(2, 30) * 10,
           isActive: Boolean(getRandomInteger(0, 1))
+        });
+      titles.splice(titles.indexOf(nextTitle), 1);
+    }
+
+    result.push({
+      type,
+      offers
+    });
+  }
+
+  return result;
+};
+
+export const getNewOffers = () => {
+  const result = [];
+
+  for (const type of types) {
+    const offers = [];
+    const titles = [
+      'Add luggage',
+      'Order Uber',
+      'Switch to comfort',
+      'Rent a car',
+      'Add breakfast',
+      'Book tickets',
+      'Lunch in city'
+    ];
+
+    for (let j = 0; j < getRandomInteger(0, 5); j++) {
+      const nextTitle = getRandomElement(titles);
+      offers.push(
+        {
+          id: j + 1,
+          title: nextTitle,
+          price: getRandomInteger(2, 30) * 10,
+          isActive: false
         });
       titles.splice(titles.indexOf(nextTitle), 1);
     }

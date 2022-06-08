@@ -75,6 +75,6 @@ export default class TripInfoView extends AbstractView {
       return createTripInfoTemplate(this.#points);
     }
 
-    return '';
+    return '<p></p>';
   }
 }
