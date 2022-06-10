@@ -3,10 +3,9 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { GetChartData } from '../utils/point-tools.js';
 import { formatMinutesInterval } from '../utils/date-time';
+import { ChartType } from '../const';
 
-const labels = ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'DRIVE', 'FLIGHT', 'CHECK-IN', 'SIGHTSEENG', 'RESTAURANT'];
-
-const renderChart = (ctx, data, title, formatter, minLength = 50) => {
+const renderChart = (ctx, labels, data, title, formatter, minLength = 50) => {
   new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
@@ -114,10 +113,41 @@ export default class StatsView extends AbstractView {
     typeCtx.width = BAR_WIDTH * 5;
     timeCtx.width = BAR_WIDTH * 5;
 
-    const data = GetChartData(this.#points)
+    const money = GetChartData(this.#points, ChartType.MONEY);
+    const type = GetChartData(this.#points, ChartType.TYPE);
+    const time = GetChartData(this.#points, ChartType.TIME);
 
-    renderChart(moneyCtx, data.money, 'MONEY', (val) => `€ ${val}`);
-    renderChart(typeCtx, data.type, 'TYPE', (val) => `${val}x`);
-    renderChart(timeCtx, data.time, 'TIME', (val) => `${formatMinutesInterval(val)}`, 75);
+    const getMinElement = (arr) => {
+      for (let i = arr.length - 1; i > 0; i--) {
+        if (arr[i] !== 0) {
+          return arr[i];
+        }
+      }
+
+      return arr[0];
+    };
+
+    const getMinLength = (arr) => {
+      if (getMinElement(arr) >= 1440) {
+        return 100;
+      }
+      else if (getMinElement(arr) >= 60) {
+        return 75;
+      }
+      return 50;
+    };
+
+    renderChart(moneyCtx, money.labels, money.values,
+      ChartType.MONEY,
+      (val) => `€ ${val}`);
+
+    renderChart(typeCtx, type.labels, type.values,
+      ChartType.TYPE,
+      (val) => `${val}x`);
+
+    renderChart(timeCtx, time.labels, time.values,
+      ChartType.TIME,
+      (val) => `${formatMinutesInterval(val)}`,
+      getMinLength(time.values));
   }
 }
