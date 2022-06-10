@@ -143,8 +143,8 @@ export const getNewPoint = () => ({
   type: 'taxi',
 });
 
-export const GetMoneyData = (points) => {
-  let types = {
+export const GetChartData = (points) => {
+  const typesMoney = {
     'taxi': 0,
     'bus': 0,
     'train': 0,
@@ -155,15 +155,36 @@ export const GetMoneyData = (points) => {
     'sightseeing': 0,
     'restaurant': 0
   };
-  let result = [];
+  const typesType = {
+    'taxi': 0,
+    'bus': 0,
+    'train': 0,
+    'ship': 0,
+    'drive': 0,
+    'flight': 0,
+    'check-in': 0,
+    'sightseeing': 0,
+    'restaurant': 0
+  };
+  const money = [];
+  const type = [];
 
-  for (let point of points)
-    if (point.type in types)
-      types[point.type] += point.basePrice;
+  for (const point of points)
+  {if (point.type in typesMoney) {
+    typesMoney[point.type] += point.basePrice;
+    typesType[point.type] += 1;
+  }}
 
-  for (let key in types) {
-    result.push(types[key])
+  for (const key in typesMoney) {
+    money.push(typesMoney[key]);
   }
 
-  return result;
-}
+  for (const key in typesType) {
+    type.push(typesType[key]);
+  }
+
+  return {
+    money,
+    type
+  };
+};

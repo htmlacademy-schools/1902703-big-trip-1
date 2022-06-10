@@ -146,7 +146,7 @@ export default class TripPresenter {
         this.#tripEventsContainer.classList.add('trip-events--hidden');
         this.#filterPresenter.destroy();
         this.#pointNewPresenter?.destroy();
-        
+
         this.#statsComponent = new StatsView(this.#pointsModel.points);
         render(document.querySelector('.page-body__page-main').querySelector('.page-body__container'), this.#statsComponent, RenderPosition.BEFOREEND);
         this.#statsComponent.drawCharts();
