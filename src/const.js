@@ -22,3 +22,14 @@ export const FilterType = {
   FUTURE: 'future',
   PAST: 'past',
 };
+
+export const MenuItem = {
+  POINTS: 'POINTS',
+  STATS: 'STATS',
+};
+
+export const ChartType = {
+  MONEY: 'MONEY',
+  TYPE: 'TYPE',
+  TIME: 'TIME',
+};

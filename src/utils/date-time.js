@@ -31,7 +31,7 @@ export const getFormDate = (date) => formatDate(date, 'YY/MM/DD HH:mm');
 const getFormattedTime = (value, mark) =>
   `${(`0${value}`).slice(-2)}${mark} `;
 
-const formatMinutesInterval = (minutes) => {
+export const formatMinutesInterval = (minutes) => {
   let hours = Math.trunc(+minutes / 60);
   const days = Math.trunc(hours / 24);
   minutes = +minutes % 60;
@@ -42,5 +42,8 @@ const formatMinutesInterval = (minutes) => {
     + `${getFormattedTime(minutes, 'M')}`;
 };
 
-export const getTimeInterval = (beginDate, endDate) =>
+export const getTimeIntervalFormatted = (beginDate, endDate) =>
   formatMinutesInterval(dayjs(endDate).diff(beginDate, 'm'));
+
+export const getTimeIntervalMinutes = (beginDate, endDate) =>
+  dayjs(endDate).diff(beginDate, 'm');

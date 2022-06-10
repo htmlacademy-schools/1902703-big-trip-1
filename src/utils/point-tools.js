@@ -1,5 +1,7 @@
 import { getNewOffers } from '../mock/destinationPoint';
 import { nanoid } from 'nanoid';
+import { getTimeIntervalMinutes } from './date-time';
+import { ChartType } from '../const';
 
 export const sortPointsByDay = (p1, p2) => p1.dateFrom - p2.dateFrom;
 
@@ -142,3 +144,52 @@ export const getNewPoint = () => ({
   offers: getNewOffers(),
   type: 'taxi',
 });
+
+export const GetChartData = (points, chartType) => {
+  const data = {
+    'taxi': 0,
+    'bus': 0,
+    'train': 0,
+    'ship': 0,
+    'drive': 0,
+    'flight': 0,
+    'check-in': 0,
+    'sightseeing': 0,
+    'restaurant': 0
+  };
+  const labels = [];
+  const values = [];
+
+  for (const point of points) {
+    if (!(point.type in data)) {
+      continue;
+    }
+
+    switch (chartType) {
+      case ChartType.MONEY:
+        data[point.type] += point.basePrice;
+        break;
+      case ChartType.TYPE:
+        data[point.type] += 1;
+        break;
+      case ChartType.TIME:
+        data[point.type] += getTimeIntervalMinutes(point.dateFrom, point.dateTo);
+        break;
+    }
+  }
+
+  const items = Object.keys(data).map((key) => [key, data[key]]);
+  items.sort((e1, e2) => e2[1] - e1[1]);
+  const sortedData = {};
+  items.forEach((e) => { sortedData[e[0]] = e[0]; });
+
+  for (const key in sortedData) {
+    labels.push(key.toUpperCase());
+    values.push(data[key]);
+  }
+
+  return {
+    labels,
+    values
+  };
+};

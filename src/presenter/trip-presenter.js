@@ -3,6 +3,7 @@ import PointListView from '../view/event-list-view.js';
 import NavigationView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
+import StatsView from '../view/stats-view';
 import PointPresenter from './point-presenter';
 import FilterPresenter from './filter-presenter';
 import PointNewPresenter from './point-new-presenter';
@@ -10,6 +11,7 @@ import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { filter } from '../utils/filter.js';
 import { sortPointsByDay, sortPointsByTime, sortPointsByPrice } from '../utils/point-tools.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
+import { MenuItem } from '../const.js';
 
 export default class TripPresenter {
   #tripMainContainer = null;
@@ -19,10 +21,11 @@ export default class TripPresenter {
   #pointListContainer = null;
 
   #tripInfoComponent = null;
-  #navigationComponent = new NavigationView();
+  #navigationComponent = null;
   #sortComponent = null;
   #pointListComponent = new PointListView();
   #emptyListComponent = null;
+  #statsComponent = null;
 
   #pointsModel = null;
   #filterModel = null;
@@ -30,6 +33,7 @@ export default class TripPresenter {
   #pointNewPresenter = null;
   #filterPresenter = null;
   #currentSortType = SortType.DAY;
+  #currentMenuItemType = MenuItem.POINTS;
 
   constructor(pointsModel, filterModel) {
     this.#pointsModel = pointsModel;
@@ -65,6 +69,7 @@ export default class TripPresenter {
 
   createPoint = () => {
     this.#currentSortType = SortType.DAY;
+    this.#currentMenuItemType = MenuItem.POINTS;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
 
     const firstPoint = this.#pointListContainer === null;
@@ -129,6 +134,26 @@ export default class TripPresenter {
     this.#reRenderPoints();
   }
 
+  #handleSiteMenuClick = (menuItem) => {
+    this.#currentMenuItemType = menuItem;
+    this.#renderNavigation();
+
+    switch (menuItem) {
+      case MenuItem.POINTS:
+        this.#reRenderTrip(true, true);
+        break;
+      case MenuItem.STATS:
+        this.#tripEventsContainer.classList.add('trip-events--hidden');
+        this.#filterPresenter.destroy();
+        this.#pointNewPresenter?.destroy();
+
+        this.#statsComponent = new StatsView(this.#pointsModel.points);
+        render(document.querySelector('.page-body__page-main').querySelector('.page-body__container'), this.#statsComponent, RenderPosition.BEFOREEND);
+        this.#statsComponent.drawCharts();
+        break;
+    }
+  };
+
   #renderTripInfo = () => {
     const oldTripComponent = this.#tripInfoComponent;
     this.#tripInfoComponent = new TripInfoView([...this.#pointsModel.points]);
@@ -146,7 +171,18 @@ export default class TripPresenter {
   }
 
   #renderNavigation = () => {
-    render(this.#navigationContainer, this.#navigationComponent, RenderPosition.BEFOREEND);
+    const prevNavigationComponent = this.#navigationComponent;
+
+    this.#navigationComponent = new NavigationView(this.#currentMenuItemType);
+    this.#navigationComponent.setMenuClickHandler(this.#handleSiteMenuClick);
+
+    if (prevNavigationComponent === null) {
+      render(this.#navigationContainer, this.#navigationComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    replace(this.#navigationComponent, prevNavigationComponent);
+    remove(prevNavigationComponent);
   }
 
   #renderSort = () => {
@@ -251,8 +287,13 @@ export default class TripPresenter {
     this.#sortComponent = null;
 
     remove(this.#navigationComponent);
+    this.#navigationComponent = null;
+
     remove(this.#pointListComponent);
     this.#pointListContainer = null;
+
+    remove(this.#statsComponent);
+    this.#statsComponent = null;
   }
 
   #reRenderPoints = () => {
@@ -260,7 +301,17 @@ export default class TripPresenter {
     this.#renderPoints();
   }
 
-  #reRenderTrip = () => {
+  #reRenderTrip = (clearFilters = false, clearSort = false) => {
+    if (clearFilters) {
+      this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    }
+
+    if (clearSort) {
+      this.#currentSortType = SortType.DAY;
+    }
+
+    this.#tripEventsContainer.classList.remove('trip-events--hidden');
+
     this.#clearTrip();
     this.#renderTrip();
   }
