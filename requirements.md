@@ -4,7 +4,7 @@
 
 ```bash
 npm i <package>@<version> -E
-npm i dayjs@1.10.7 -E
+npm i chartjs-plugin-datalabels@0.7.0 -E
 npm i eslint@7.32.0 -DE
 ```
 

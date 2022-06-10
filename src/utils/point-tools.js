@@ -142,3 +142,28 @@ export const getNewPoint = () => ({
   offers: getNewOffers(),
   type: 'taxi',
 });
+
+export const GetMoneyData = (points) => {
+  let types = {
+    'taxi': 0,
+    'bus': 0,
+    'train': 0,
+    'ship': 0,
+    'drive': 0,
+    'flight': 0,
+    'check-in': 0,
+    'sightseeing': 0,
+    'restaurant': 0
+  };
+  let result = [];
+
+  for (let point of points)
+    if (point.type in types)
+      types[point.type] += point.basePrice;
+
+  for (let key in types) {
+    result.push(types[key])
+  }
+
+  return result;
+}
