@@ -1,4 +1,4 @@
-import { getMonthDay, getDate, getTime, getDatetime, getTimeInterval } from '../utils/date-time.js';
+import { getMonthDay, getDate, getTime, getDatetime, getTimeIntervalFormatted } from '../utils/date-time.js';
 import { createOffersTemplate } from '../utils/point-tools.js';
 import AbstractView from './abstract-view.js';
 
@@ -18,7 +18,7 @@ const createDestinationPointTemplate = (point) => {
           &mdash;
           <time class="event__end-time" datetime="${getDatetime(dateTo)}">${getTime(dateTo)}</time>
         </p>
-        <p class="event__duration">${getTimeInterval(dateFrom, dateTo)}</p>
+        <p class="event__duration">${getTimeIntervalFormatted(dateFrom, dateTo)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

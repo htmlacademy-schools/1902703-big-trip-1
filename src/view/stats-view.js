@@ -2,22 +2,23 @@ import AbstractView from './abstract-view.js';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { GetChartData } from '../utils/point-tools.js';
+import { formatMinutesInterval } from '../utils/date-time';
 
 const labels = ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'DRIVE', 'FLIGHT', 'CHECK-IN', 'SIGHTSEENG', 'RESTAURANT'];
 
-const renderMoneyChart = (moneyCtx, points) => {
-  new Chart(moneyCtx, {
+const renderChart = (ctx, data, title, formatter, minLength = 50) => {
+  new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
       labels: labels,
       datasets: [{
-        data: GetChartData(points).money,
+        data: data,
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
         barThickness: 44,
-        minBarLength: 50,
+        minBarLength: minLength,
       }],
     },
     options: {
@@ -30,80 +31,12 @@ const renderMoneyChart = (moneyCtx, points) => {
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          formatter: (val) => `€ ${val}`,
+          formatter: formatter,
         },
       },
       title: {
         display: true,
-        text: 'MONEY',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-        }],
-      },
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        enabled: false,
-      },
-    },
-  });
-};
-
-const renderTypeChart = (typeCtx, points) => {
-  new Chart(typeCtx, {
-    plugins: [ChartDataLabels],
-    type: 'horizontalBar',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: GetChartData(points).type,
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
-        barThickness: 44,
-        minBarLength: 50,
-      }],
-    },
-    options: {
-      responsive: false,
-      plugins: {
-        datalabels: {
-          font: {
-            size: 13,
-          },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
-          formatter: (val) => `${val}x`,
-        },
-      },
-      title: {
-        display: true,
-        text: 'TYPE',
+        text: title,
         fontColor: '#000000',
         fontSize: 23,
         position: 'left',
@@ -181,7 +114,10 @@ export default class StatsView extends AbstractView {
     typeCtx.width = BAR_WIDTH * 5;
     timeCtx.width = BAR_WIDTH * 5;
 
-    renderMoneyChart(moneyCtx, this.#points);
-    renderTypeChart(typeCtx, this.#points);
+    const data = GetChartData(this.#points)
+
+    renderChart(moneyCtx, data.money, 'MONEY', (val) => `€ ${val}`);
+    renderChart(typeCtx, data.type, 'TYPE', (val) => `${val}x`);
+    renderChart(timeCtx, data.time, 'TIME', (val) => `${formatMinutesInterval(val)}`, 75);
   }
 }

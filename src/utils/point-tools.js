@@ -1,5 +1,6 @@
 import { getNewOffers } from '../mock/destinationPoint';
 import { nanoid } from 'nanoid';
+import { getTimeIntervalMinutes } from './date-time';
 
 export const sortPointsByDay = (p1, p2) => p1.dateFrom - p2.dateFrom;
 
@@ -166,14 +167,29 @@ export const GetChartData = (points) => {
     'sightseeing': 0,
     'restaurant': 0
   };
+  const typesTime = {
+    'taxi': 0,
+    'bus': 0,
+    'train': 0,
+    'ship': 0,
+    'drive': 0,
+    'flight': 0,
+    'check-in': 0,
+    'sightseeing': 0,
+    'restaurant': 0
+  };
+
   const money = [];
   const type = [];
+  const time = [];
 
-  for (const point of points)
-  {if (point.type in typesMoney) {
-    typesMoney[point.type] += point.basePrice;
-    typesType[point.type] += 1;
-  }}
+  for (const point of points) {
+    if (point.type in typesMoney) {
+      typesMoney[point.type] += point.basePrice;
+      typesType[point.type] += 1;
+      typesTime[point.type] += getTimeIntervalMinutes(point.dateFrom, point.dateTo);
+    }
+  }
 
   for (const key in typesMoney) {
     money.push(typesMoney[key]);
@@ -183,8 +199,13 @@ export const GetChartData = (points) => {
     type.push(typesType[key]);
   }
 
+  for (const key in typesTime) {
+    time.push(typesTime[key]);
+  }
+
   return {
     money,
-    type
+    type,
+    time
   };
 };
