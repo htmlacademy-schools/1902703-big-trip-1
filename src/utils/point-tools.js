@@ -1,4 +1,4 @@
-import { getNewOffers } from '../mock/destinationPoint';
+import { generateOffers } from '../mock/destinationPoint';
 import { nanoid } from 'nanoid';
 import { getTimeIntervalMinutes } from './date-time';
 import { ChartType } from '../const';
@@ -10,10 +10,11 @@ export const sortPointsByTime = (p1, p2) =>
 
 export const sortPointsByPrice = (p1, p2) => p2.basePrice - p1.basePrice;
 
-export const createOffersTemplate = (offerArray, type) => {
+export const createOffersTemplate = (offers) => {
   const getOffersTemplate = (offers) => {
-    const offersToRender = offers.filter((offer) => offer.isActive);
-    if (offersToRender.length === 0) { return ''; }
+    if (offers.length === 0) {
+      return '';
+    }
 
     const getListItemTemplate = (offer) => {
       const { title, price } = offer;
@@ -24,13 +25,11 @@ export const createOffersTemplate = (offerArray, type) => {
     </li>`;
     };
 
-    return offersToRender.map((offer) => getListItemTemplate(offer)).join('\n');
+    return offers.map((offer) => getListItemTemplate(offer)).join('\n');
   };
 
-  const typeOffers = offerArray.filter((offerStruct) => offerStruct.type === type);
-
-  if (typeOffers.length > 0) {
-    const offersTemplate = getOffersTemplate(typeOffers[0].offers);
+  if (offers.offers) {
+    const offersTemplate = getOffersTemplate(offers.offers);
 
     if (offersTemplate !== '') {
       return `<h4 class="visually-hidden">Offers:</h4>
@@ -43,16 +42,18 @@ export const createOffersTemplate = (offerArray, type) => {
   return '';
 };
 
-export const createFormOffersTemplate = (offerArray, type) => {
+export const createFormOffersTemplate = (offers) => {
   const getOffersTemplate = (offers) => {
-    if (offers.length === 0) { return ''; }
+    if (offers.length === 0) {
+      return '';
+    }
 
     const getListItemTemplate = (offer) => {
       const { id, title, price, isActive } = offer;
 
       return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isActive ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-${type}-${id}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offers.type}-${id}" type="checkbox" name="event-offer-${offers.type}" ${isActive ? 'checked' : ''}>
+        <label class="event__offer-label" for="event-offer-${offers.type}-${id}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${price}</span>
@@ -63,10 +64,8 @@ export const createFormOffersTemplate = (offerArray, type) => {
     return offers.map((offer) => getListItemTemplate(offer)).join('\n');
   };
 
-  const typeOffers = offerArray.filter((offerStruct) => offerStruct.type === type);
-
-  if (typeOffers.length > 0) {
-    const offersTemplate = getOffersTemplate(typeOffers[0].offers);
+  if (offers.offers) {
+    const offersTemplate = getOffersTemplate(offers.offers);
 
     if (offersTemplate !== '') {
       return `<section class="event__section  event__section--offers">
@@ -141,7 +140,7 @@ export const getNewPoint = () => ({
   destination: null,
   id: nanoid(),
   isFavorite: false,
-  offers: getNewOffers(),
+  offers: generateOffers('taxi'),
   type: 'taxi',
 });
 

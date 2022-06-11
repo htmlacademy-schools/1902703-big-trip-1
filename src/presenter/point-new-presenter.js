@@ -26,7 +26,7 @@ export default class PointNewPresenter {
     render(this.#pointListContainer, this.#formCreateComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
+    document.querySelector('.trip-main__event-add-btn').disabled = true;
   }
 
   destroy = () => {
@@ -38,7 +38,7 @@ export default class PointNewPresenter {
     this.#formCreateComponent = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
   #handleFormSubmit = (point) => {

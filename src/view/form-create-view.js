@@ -99,7 +99,7 @@ const createFormCreateTemplate = (point) => {
       </header>
       <section class="event__details">
 
-        ${createFormOffersTemplate(offers, type)}
+        ${createFormOffersTemplate(offers)}
 
         ${createFormDescription(destination?.description, destination?.pictures)}
         

@@ -20,6 +20,7 @@ export default class TripPresenter {
   #tripEventsContainer = null;
   #pointListContainer = null;
 
+  #loadingComponent = new EmptyListView('Loading...');
   #tripInfoComponent = null;
   #navigationComponent = null;
   #sortComponent = null;
@@ -34,6 +35,7 @@ export default class TripPresenter {
   #filterPresenter = null;
   #currentSortType = SortType.DAY;
   #currentMenuItemType = MenuItem.POINTS;
+  #isLoading = true;
 
   constructor(pointsModel, filterModel) {
     this.#pointsModel = pointsModel;
@@ -120,6 +122,11 @@ export default class TripPresenter {
         this.#currentSortType = SortType.DAY;
         this.#reRenderTrip();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        document.querySelector('.trip-main__event-add-btn').disabled = false;
+        this.#reRenderTrip();
+        break;
     }
 
     this.#renderTripInfo();
@@ -203,6 +210,10 @@ export default class TripPresenter {
     render(this.#tripEventsContainer, this.#pointListComponent, RenderPosition.BEFOREEND);
   }
 
+  #renderLoading = () => {
+    render(this.#tripEventsContainer, this.#loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   #renderEmpty = (filterType) => {
     let message = 'Click New Event to create your first point';
 
@@ -268,6 +279,11 @@ export default class TripPresenter {
     this.#filterPresenter = new FilterPresenter(this.#filterContainer, this.#filterModel, this.#pointsModel);
     this.#filterPresenter.init();
 
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     this.#renderSort();
     this.#renderPointList();
     this.#pointListContainer = this.#tripEventsContainer.querySelector('.trip-events__list');
@@ -279,6 +295,8 @@ export default class TripPresenter {
     this.#pointNewPresenter?.destroy();
     this.#clearPointList();
     this.#filterPresenter.destroy();
+
+    remove(this.#loadingComponent);
 
     remove(this.#tripInfoComponent);
     this.#tripInfoComponent = null;
