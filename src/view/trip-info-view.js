@@ -18,13 +18,10 @@ const getTripInfo = (points) => {
   for (const point of points) {
     price += point.basePrice;
 
-    const typeOffers = point.offers.filter((offerStruct) => offerStruct.type === point.type);
-    if (typeOffers.length > 0) {
-      typeOffers[0].offers
+    if (point.offers.offers) {
+      point.offers.offers
         .forEach((offer) => {
-          if (offer.isActive) {
-            price += offer.price;
-          }
+          price += offer.price;
         });
     }
 

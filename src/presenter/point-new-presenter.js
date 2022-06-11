@@ -7,11 +7,13 @@ export default class PointNewPresenter {
   #pointListContainer = null;
   #changeData = null;
   #formCreateComponent = null;
+  #pointsModel = null;
 
-  constructor(pointListContainer, changeData, isFirstPoint) {
+  constructor(pointListContainer, changeData, isFirstPoint, pointsModel) {
     this.#pointListContainer = pointListContainer;
     this.#changeData = changeData;
     this.#isFirstPoint = isFirstPoint;
+    this.#pointsModel = pointsModel;
   }
 
   init = () => {
@@ -19,14 +21,14 @@ export default class PointNewPresenter {
       return;
     }
 
-    this.#formCreateComponent = new FormCreateView();
+    this.#formCreateComponent = new FormCreateView(this.#pointsModel._destinations, this.#pointsModel._offers);
     this.#formCreateComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#formCreateComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     render(this.#pointListContainer, this.#formCreateComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
+    document.querySelector('.trip-main__event-add-btn').disabled = true;
   }
 
   destroy = () => {
@@ -38,7 +40,7 @@ export default class PointNewPresenter {
     this.#formCreateComponent = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
   #handleFormSubmit = (point) => {

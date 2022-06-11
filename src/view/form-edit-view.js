@@ -1,13 +1,12 @@
-import { createFormOffersTemplate, createFormDescription, createCityDataList } from '../utils/point-tools.js';
+import { createFormOffersTemplate, createFormDescription, createCityDataList, getOffers, getDestination } from '../utils/point-tools.js';
 import { getFormDate } from '../utils/date-time.js';
-import { generatePictures, generateDescription } from '../mock/destinationPoint';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createFormEditTemplate = (point) => {
+const createFormEditTemplate = (point, destinations, offersList) => {
   const { basePrice, dateFrom, dateTo, destination, id, offers, type } = point;
 
   return `<li class="trip-events__item">
@@ -77,7 +76,7 @@ const createFormEditTemplate = (point) => {
           ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${he.encode(destination?.name ? destination.name : '')}" list="destination-list-${id}">
-          ${createCityDataList(id)}
+          ${createCityDataList(id, destinations)}
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -104,9 +103,9 @@ const createFormEditTemplate = (point) => {
       </header>
       <section class="event__details">
 
-      ${createFormOffersTemplate(offers, type)}
+      ${createFormOffersTemplate(type, offers, offersList)}
 
-      ${createFormDescription(destination.description)}
+      ${createFormDescription(destination?.description)}
         
       </section>
     </form>
@@ -117,16 +116,18 @@ export default class FormEditView extends SmartView {
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  constructor(point) {
+  constructor(point, destinations, offers) {
     super();
     this._point = point;
+    this._destinations = destinations;
+    this._offers = offers;
 
     this.#setInnerHandlers();
     this.#setDatepicker();
   }
 
   get template() {
-    return createFormEditTemplate(this._point);
+    return createFormEditTemplate(this._point, this._destinations, getOffers(this._point.type, this._offers).offers);
   }
 
   removeElement = () => {
@@ -229,25 +230,11 @@ export default class FormEditView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-
-    const cities = [
-      'Geneva',
-      'Amsterdam',
-      'Chamonix',
-      'Moscow',
-      'Yekaterinburg',
-      'Saint Petersburg',
-      'Novosibirsk',
-      'Kazan',
-      'Nizhny Novgorod',
-      'Chelyabinsk',
-      'Samara',
-      'Omsk'
-    ];
+    const cities = this._destinations.map((dest) => dest.name);
 
     if (this._point.destination === null
       || this._point.type === null
-      || !cities.includes(this._point.destination.name)
+      || !cities.includes(this._point.destination?.name)
       || isNaN(this._point.basePrice)
       || this._point.basePrice < 0) {
       return;
@@ -268,34 +255,17 @@ export default class FormEditView extends SmartView {
 
   #changeTypeHandler = (evt) => {
     evt.preventDefault();
-
     const type = evt.target.value;
-    const offers = [...this._point.offers];
-
-    for (const offerStruct of offers) {
-      if (offerStruct.type !== type) {
-        continue;
-      }
-
-      offerStruct.offers.forEach((offer) => {
-        offer.isActive = false;
-      });
-
-      break;
-    }
-
-    this.updateData({ type, offers });
+    this.updateData({
+      type,
+      offers: []
+    });
   }
 
   #changeCityHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
-      destination:
-      {
-        name: evt.target.value,
-        description: generateDescription(),
-        pictures: generatePictures()
-      }
+      destination: getDestination(evt.target.value, this._destinations)
     });
   }
 
@@ -307,17 +277,24 @@ export default class FormEditView extends SmartView {
   #changeOptionsHandler = (evt) => {
     evt.preventDefault();
     const splited = evt.target.id.split('-');
-    const index = +splited[splited.length - 1] - 1;
-    const offers = [...this._point.offers];
+    const id = +splited[splited.length - 1];
+    const offers = getOffers(this._point.type, this._offers).offers;
+    const newOffers = [];
+    let wasChosen = false;
 
-    for (const offerStruct of offers) {
-      if (offerStruct.type !== this._point.type) { continue; }
-
-      const e = offerStruct.offers[index];
-      e.isActive = !e.isActive;
-      break;
+    for (const off of this._point.offers) {
+      if (off.id !== id) {
+        newOffers.push(off);
+      }
+      else {
+        wasChosen = true;
+      }
     }
 
-    this.updateData({ offers });
+    if (!wasChosen) {
+      newOffers.push(offers.filter((off) => off.id === id)[0]);
+    }
+
+    this.updateData({ offers: newOffers });
   }
 }
