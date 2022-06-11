@@ -9,7 +9,7 @@ export const sortPointsByTime = (p1, p2) =>
 
 export const sortPointsByPrice = (p1, p2) => p2.basePrice - p1.basePrice;
 
-export const createOffersTemplate = (offers) => {
+export const createOffersTemplate = (pointOffers) => {
   const getOffersTemplate = (offers) => {
     if (offers.length === 0) {
       return '';
@@ -27,8 +27,8 @@ export const createOffersTemplate = (offers) => {
     return offers.map((offer) => getListItemTemplate(offer)).join('\n');
   };
 
-  if (offers) {
-    const offersTemplate = getOffersTemplate(offers);
+  if (pointOffers) {
+    const offersTemplate = getOffersTemplate(pointOffers);
 
     if (offersTemplate !== '') {
       return `<h4 class="visually-hidden">Offers:</h4>
@@ -49,7 +49,7 @@ export const createFormOffersTemplate = (type, pointOffers, offersList) => {
 
     const getListItemTemplate = (offer) => {
       const { id, title, price } = offer;
-      const isActive = pointOffers.filter(off => off.id === offer.id).length > 0;
+      const isActive = pointOffers.filter((off) => off.id === offer.id).length > 0;
 
       return `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isActive ? 'checked' : ''}>
@@ -106,7 +106,7 @@ export const createFormDescription = (description, pictures) => {
 
 export const createCityDataList = (id, destinations) => {
   const result = [];
-  const cities = destinations.map(dest => dest.name);
+  const cities = destinations.map((dest) => dest.name);
 
   for (const item of cities) {
     result.push(`<option value="${item}"></option>`);
@@ -125,16 +125,16 @@ export const getOffers = (type, offersList) => {
   if (result) {
     return result;
   }
-  return null;
-}
+  return [];
+};
 
 export const getDestination = (name, destinations) => {
-  const result = destinations.filter((dest) => dest.name === name)[0]
+  const result = destinations.filter((dest) => dest.name === name)[0];
   if (result) {
     return result;
   }
   return null;
-}
+};
 
 export const getNewPoint = (offersList) => ({
   basePrice: 0,

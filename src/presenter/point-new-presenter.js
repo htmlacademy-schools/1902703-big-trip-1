@@ -7,11 +7,13 @@ export default class PointNewPresenter {
   #pointListContainer = null;
   #changeData = null;
   #formCreateComponent = null;
+  #pointsModel = null;
 
-  constructor(pointListContainer, changeData, isFirstPoint) {
+  constructor(pointListContainer, changeData, isFirstPoint, pointsModel) {
     this.#pointListContainer = pointListContainer;
     this.#changeData = changeData;
     this.#isFirstPoint = isFirstPoint;
+    this.#pointsModel = pointsModel;
   }
 
   init = () => {
@@ -19,7 +21,7 @@ export default class PointNewPresenter {
       return;
     }
 
-    this.#formCreateComponent = new FormCreateView();
+    this.#formCreateComponent = new FormCreateView(this.#pointsModel._destinations, this.#pointsModel._offers);
     this.#formCreateComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#formCreateComponent.setDeleteClickHandler(this.#handleDeleteClick);
 

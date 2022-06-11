@@ -230,7 +230,7 @@ export default class FormEditView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    const cities = this._destinations.map(dest => dest.name);
+    const cities = this._destinations.map((dest) => dest.name);
 
     if (this._point.destination === null
       || this._point.type === null
@@ -282,7 +282,7 @@ export default class FormEditView extends SmartView {
     const newOffers = [];
     let wasChosen = false;
 
-    for (let off of this._point.offers) {
+    for (const off of this._point.offers) {
       if (off.id !== id) {
         newOffers.push(off);
       }
@@ -292,7 +292,7 @@ export default class FormEditView extends SmartView {
     }
 
     if (!wasChosen) {
-      newOffers.push(offers.filter(off => off.id === id)[0]);
+      newOffers.push(offers.filter((off) => off.id === id)[0]);
     }
 
     this.updateData({ offers: newOffers });

@@ -12,7 +12,7 @@ export default class PointsModel extends AbstractObservable {
     this.#apiService = apiService;
 
   }
-  
+
   init = async () => {
     const points = await this.#apiService.points;
     this.#points = points.map(this.#adaptToClient);
@@ -21,23 +21,17 @@ export default class PointsModel extends AbstractObservable {
     this._offers = await this.#apiService.offers;
 
     try {
-      const points = await this.#apiService.points;
-      this.#points = points.map(this.#adaptToClient);
+      const pointsRetry = await this.#apiService.points;
+      this.#points = pointsRetry.map(this.#adaptToClient);
 
       this._destinations = await this.#apiService.destinations;
       this._offers = await this.#apiService.offers;
     }
     catch (err) {
-      console.log(err);
-
       this.#points = [];
       this._destinations = [];
       this._offers = [];
     }
-
-    console.log('points', this.points);
-    console.log('_destinations', this._destinations);
-    console.log('_offers', this._offers);
 
     this._notify(UpdateType.INIT);
   }
