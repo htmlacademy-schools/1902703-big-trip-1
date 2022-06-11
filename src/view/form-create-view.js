@@ -1,7 +1,6 @@
 import SmartView from './smart-view.js';
 import { createFormOffersTemplate, createFormDescription, getNewPoint, createCityDataList } from '../utils/point-tools.js';
 import { getFormDate } from '../utils/date-time.js';
-import { generatePictures, generateDescription } from '../mock/destinationPoint';
 import flatpickr from 'flatpickr';
 import he from 'he';
 

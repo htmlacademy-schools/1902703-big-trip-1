@@ -2,6 +2,8 @@ import AbstractObservable from '../utils/abstract-observable.js';
 import { UpdateType } from '../const.js';
 
 export default class PointsModel extends AbstractObservable {
+  _destinations = [];
+  _offers = [];
   #apiService = null;
   #points = [];
 
@@ -9,40 +11,39 @@ export default class PointsModel extends AbstractObservable {
     super();
     this.#apiService = apiService;
 
-    this.#apiService.points.then((points) => {
-      console.log('points');
-      console.log(points.map(this.#adaptToClient));
-    });
-
-    // this.#apiService.destinations.then((points) => {
-    //   console.log('destinations');
-    //   console.log(points);
-    // });
-
-    // this.#apiService.offers.then((points) => {
-    //   console.log('offers');
-    //   console.log(points);
-    // });
   }
-
+  
   init = async () => {
     const points = await this.#apiService.points;
     this.#points = points.map(this.#adaptToClient);
 
+    this._destinations = await this.#apiService.destinations;
+    this._offers = await this.#apiService.offers;
+
     try {
       const points = await this.#apiService.points;
       this.#points = points.map(this.#adaptToClient);
+
+      this._destinations = await this.#apiService.destinations;
+      this._offers = await this.#apiService.offers;
     }
     catch (err) {
+      console.log(err);
+
       this.#points = [];
+      this._destinations = [];
+      this._offers = [];
     }
+
+    console.log('points', this.points);
+    console.log('_destinations', this._destinations);
+    console.log('_offers', this._offers);
 
     this._notify(UpdateType.INIT);
   }
 
   set points(points) {
     this.#points = [...points];
-    console.log(points);
   }
 
   get points() {

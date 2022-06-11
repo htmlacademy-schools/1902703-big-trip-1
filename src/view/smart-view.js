@@ -2,6 +2,8 @@ import AbstractView from './abstract-view.js';
 
 export default class SmartView extends AbstractView {
   _point = {};
+  _destinations = [];
+  _offers = [];
 
   restoreHandlers = () => {
     throw new Error('Abstract method not implemented: restoreHandlers');

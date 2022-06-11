@@ -74,9 +74,9 @@ export default class TripPresenter {
     this.#currentMenuItemType = MenuItem.POINTS;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
 
-    const firstPoint = this.#pointListContainer === null;
+    const isfirstPoint = this.#pointListContainer === null;
 
-    if (firstPoint) {
+    if (isfirstPoint) {
       remove(this.#emptyListComponent);
       this.#emptyListComponent = null;
 
@@ -84,7 +84,7 @@ export default class TripPresenter {
       this.#pointListContainer = this.#tripEventsContainer.querySelector('.trip-events__list');
     }
 
-    this.#pointNewPresenter = new PointNewPresenter(this.#pointListContainer, this.#handleViewAction, firstPoint);
+    this.#pointNewPresenter = new PointNewPresenter(this.#pointListContainer, this.#handleViewAction, isfirstPoint, this.#pointsModel);
     this.#pointNewPresenter.init();
   }
 
@@ -240,7 +240,7 @@ export default class TripPresenter {
   }
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#pointListContainer, this.#handleViewAction, this.#handleModeChange);
+    const pointPresenter = new PointPresenter(this.#pointListContainer, this.#handleViewAction, this.#handleModeChange, this.#pointsModel);
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
