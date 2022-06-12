@@ -1,6 +1,7 @@
 import FilterView from '../view/filter-view.js';
 import { render, RenderPosition, replace, remove } from '../utils/render.js';
-import { UpdateType } from '../const.js';
+import { UpdateType, FilterType } from '../const.js';
+import { filter } from '../utils/filter.js';
 
 export default class FilterPresenter {
   #filterContainer = null;
@@ -20,8 +21,10 @@ export default class FilterPresenter {
 
   init = () => {
     const prevFilterComponent = this.#filterComponent;
+    const futureIsDisabled = filter[FilterType.FUTURE]([...this.#pointsModel.points])?.length === 0;
+    const pastIsDisabled = filter[FilterType.PAST]([...this.#pointsModel.points])?.length === 0;
 
-    this.#filterComponent = new FilterView(this.#filterModel.filter);
+    this.#filterComponent = new FilterView(this.#filterModel.filter, futureIsDisabled, pastIsDisabled);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
