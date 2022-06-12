@@ -93,19 +93,35 @@ export default class TripPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.SAVING);
-        this.#pointsModel.updatePoint(updateType, update);
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        }
+        catch (err) {
+          this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_POINT:
         this.#pointNewPresenter.setSaving();
-        this.#pointsModel.addPoint(updateType, update);
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+          this.#pointNewPresenter.destroy();
+        }
+        catch (err) {
+          this.#pointNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
         this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.DELETING);
-        this.#pointsModel.deletePoint(updateType, update);
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        }
+        catch (err) {
+          this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.UPDATE_VIEW:
         this.#pointsModel.updateView(updateType);

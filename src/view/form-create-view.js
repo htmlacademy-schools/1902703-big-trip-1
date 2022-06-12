@@ -221,16 +221,6 @@ export default class FormCreateView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    const cities = this._destinations.map((dest) => dest.name);
-
-    if (this._point.destination === null
-      || this._point.type === null
-      || !cities.includes(this._point.destination?.name)
-      || isNaN(this._point.basePrice)
-      || this._point.basePrice < 1) {
-      return;
-    }
-
     this._callback.formSubmit(this._point);
   }
 

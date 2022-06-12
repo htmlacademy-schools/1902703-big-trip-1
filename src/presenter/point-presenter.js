@@ -12,6 +12,7 @@ const Mode = {
 export const State = {
   SAVING: 'SAVING',
   DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 export default class PointPresenter {
@@ -72,6 +73,17 @@ export default class PointPresenter {
       return;
     }
 
+    const resetFormState = () => {
+      this.#formEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+      document.addEventListener('keydown', this.#escKeyDownHandler);
+    };
+
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+
     switch (state) {
       case State.SAVING:
         this.#formEditComponent.updateData({
@@ -84,6 +96,10 @@ export default class PointPresenter {
           isDisabled: true,
           isDeleting: true,
         });
+        break;
+      case State.ABORTING:
+        this.#pointComponent.shake(resetFormState);
+        this.#formEditComponent.shake(resetFormState);
         break;
     }
   }

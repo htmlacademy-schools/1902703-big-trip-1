@@ -230,16 +230,6 @@ export default class FormEditView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    const cities = this._destinations.map((dest) => dest.name);
-
-    if (this._point.destination === null
-      || this._point.type === null
-      || !cities.includes(this._point.destination?.name)
-      || isNaN(this._point.basePrice)
-      || this._point.basePrice < 0) {
-      return;
-    }
-
     this._callback.formSubmit(this._point);
   }
 
