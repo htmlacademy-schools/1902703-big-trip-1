@@ -99,6 +99,9 @@ export default class ApiService {
     delete adaptedpoint.dateFrom;
     delete adaptedpoint.dateTo;
     delete adaptedpoint.isFavorite;
+    delete adaptedpoint.isDisabled;
+    delete adaptedpoint.isSaving;
+    delete adaptedpoint.isDeleting;
 
     return adaptedpoint;
   }

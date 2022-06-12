@@ -109,6 +109,9 @@ export default class PointsModel extends AbstractObservable {
       dateFrom: new Date(point['date_from']),
       dateTo: new Date(point['date_to']),
       isFavorite: point['is_favorite'],
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
     };
 
     delete adaptedpoint['base_price'];
