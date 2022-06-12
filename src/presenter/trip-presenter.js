@@ -265,11 +265,9 @@ export default class TripPresenter {
 
   #renderPoints = () => {
     if (this.points?.length === 0) {
-      if (this.#pointsModel.points?.length === 0) {
-        remove(this.#sortComponent);
-        remove(this.#pointListComponent);
-        this.#pointListContainer = null;
-      }
+      remove(this.#sortComponent);
+      remove(this.#pointListComponent);
+      this.#pointListContainer = null;
 
       this.#renderEmpty(this.#filterModel.filter);
       return;
