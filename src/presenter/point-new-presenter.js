@@ -43,6 +43,27 @@ export default class PointNewPresenter {
     document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
+  setSaving = () => {
+    this.#formCreateComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#formCreateComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+      document.addEventListener('keydown', this.#escKeyDownHandler);
+    };
+
+    this.#formCreateComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (point) => {
     this.#changeData(
       UserAction.ADD_POINT,
@@ -51,7 +72,6 @@ export default class PointNewPresenter {
         : UpdateType.MINOR,
       point,
     );
-    this.destroy();
   }
 
   #handleDeleteClick = () => {

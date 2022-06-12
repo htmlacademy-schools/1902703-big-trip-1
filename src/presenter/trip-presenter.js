@@ -4,7 +4,7 @@ import NavigationView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import StatsView from '../view/stats-view';
-import PointPresenter from './point-presenter';
+import PointPresenter, { State as PointPresenterViewState } from './point-presenter';
 import FilterPresenter from './filter-presenter';
 import PointNewPresenter from './point-new-presenter';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
@@ -65,7 +65,6 @@ export default class TripPresenter {
   }
 
   init = () => {
-    this.#currentSortType = SortType.DAY;
     this.#renderTrip();
   }
 
@@ -93,16 +92,35 @@ export default class TripPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.SAVING);
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        }
+        catch (err) {
+          this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#pointNewPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+          this.#pointNewPresenter.destroy();
+        }
+        catch (err) {
+          this.#pointNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.DELETING);
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        }
+        catch (err) {
+          this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.UPDATE_VIEW:
         this.#pointsModel.updateView(updateType);
@@ -180,7 +198,7 @@ export default class TripPresenter {
   #renderNavigation = () => {
     const prevNavigationComponent = this.#navigationComponent;
 
-    this.#navigationComponent = new NavigationView(this.#currentMenuItemType);
+    this.#navigationComponent = new NavigationView(this.#currentMenuItemType, this.#isLoading);
     this.#navigationComponent.setMenuClickHandler(this.#handleSiteMenuClick);
 
     if (prevNavigationComponent === null) {

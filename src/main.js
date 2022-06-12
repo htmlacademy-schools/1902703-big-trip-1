@@ -19,4 +19,3 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
 });
 
 document.querySelector('.trip-main__event-add-btn').disabled = true;
-

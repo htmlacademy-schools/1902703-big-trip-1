@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { getTimeIntervalMinutes } from './date-time';
 import { ChartType } from '../const';
 
@@ -41,7 +40,7 @@ export const createOffersTemplate = (pointOffers) => {
   return '';
 };
 
-export const createFormOffersTemplate = (type, pointOffers, offersList) => {
+export const createFormOffersTemplate = (type, pointOffers, offersList, isDisabled) => {
   const getOffersTemplate = (offers) => {
     if (offers.length === 0) {
       return '';
@@ -52,7 +51,7 @@ export const createFormOffersTemplate = (type, pointOffers, offersList) => {
       const isActive = pointOffers.filter((off) => off.id === offer.id).length > 0;
 
       return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isActive ? 'checked' : ''}>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isActive ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
         <label class="event__offer-label" for="event-offer-${type}-${id}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
@@ -137,14 +136,16 @@ export const getDestination = (name, destinations) => {
 };
 
 export const getNewPoint = (offersList) => ({
-  basePrice: 0,
+  basePrice: 1,
   dateFrom: new Date(Date.now()),
   dateTo: new Date(Date.now()),
   destination: null,
-  id: nanoid(),
   isFavorite: false,
   offers: getOffers('taxi', offersList),
   type: 'taxi',
+  isDisabled: false,
+  isSaving: false,
+  isDeleting: false,
 });
 
 export const GetChartData = (points, chartType) => {
