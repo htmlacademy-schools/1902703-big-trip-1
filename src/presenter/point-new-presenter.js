@@ -43,6 +43,13 @@ export default class PointNewPresenter {
     document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
+  setSaving = () => {
+    this.#formCreateComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
   #handleFormSubmit = (point) => {
     this.#changeData(
       UserAction.ADD_POINT,
@@ -51,7 +58,6 @@ export default class PointNewPresenter {
         : UpdateType.MINOR,
       point,
     );
-    this.destroy();
   }
 
   #handleDeleteClick = () => {

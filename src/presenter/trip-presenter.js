@@ -4,7 +4,7 @@ import NavigationView from '../view/site-menu-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import StatsView from '../view/stats-view';
-import PointPresenter from './point-presenter';
+import PointPresenter, { State as PointPresenterViewState } from './point-presenter';
 import FilterPresenter from './filter-presenter';
 import PointNewPresenter from './point-new-presenter';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
@@ -96,12 +96,15 @@ export default class TripPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.SAVING);
         this.#pointsModel.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
+        this.#pointNewPresenter.setSaving();
         this.#pointsModel.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
+        this.#pointPresenters.get(update.id).setViewState(PointPresenterViewState.DELETING);
         this.#pointsModel.deletePoint(updateType, update);
         break;
       case UserAction.UPDATE_VIEW:
