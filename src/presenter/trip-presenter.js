@@ -65,7 +65,6 @@ export default class TripPresenter {
   }
 
   init = () => {
-    this.#currentSortType = SortType.DAY;
     this.#renderTrip();
   }
 
@@ -199,7 +198,7 @@ export default class TripPresenter {
   #renderNavigation = () => {
     const prevNavigationComponent = this.#navigationComponent;
 
-    this.#navigationComponent = new NavigationView(this.#currentMenuItemType);
+    this.#navigationComponent = new NavigationView(this.#currentMenuItemType, this.#isLoading);
     this.#navigationComponent.setMenuClickHandler(this.#handleSiteMenuClick);
 
     if (prevNavigationComponent === null) {
