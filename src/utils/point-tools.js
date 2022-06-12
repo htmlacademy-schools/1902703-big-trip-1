@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { getTimeIntervalMinutes } from './date-time';
 import { ChartType } from '../const';
 
@@ -137,11 +136,10 @@ export const getDestination = (name, destinations) => {
 };
 
 export const getNewPoint = (offersList) => ({
-  basePrice: 0,
+  basePrice: 1,
   dateFrom: new Date(Date.now()),
   dateTo: new Date(Date.now()),
   destination: null,
-  id: nanoid(),
   isFavorite: false,
   offers: getOffers('taxi', offersList),
   type: 'taxi',
